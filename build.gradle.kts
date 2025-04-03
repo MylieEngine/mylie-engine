@@ -20,7 +20,6 @@ subprojects {
         plugins.withId("java-base") {
             apply(plugin = libs.plugins.spotless.get().pluginId)
             dependencies {
-                val implementation by configurations
                 val compileOnly by configurations
                 val annotationProcessor by configurations
                 val api by configurations
