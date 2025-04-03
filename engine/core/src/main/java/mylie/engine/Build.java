@@ -14,6 +14,8 @@ import lombok.Getter;
  */
 @Getter
 public class Build {
+	private Build() {
+	}
 	private static final Info INFO = new Info();
 
 	/**
