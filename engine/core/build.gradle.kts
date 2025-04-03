@@ -6,6 +6,15 @@ plugins {
     alias(libs.plugins.palantirGitVersion)
 }
 
+dependencies {
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.bundles.junit)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
 private object Defaults {
     const val UNKNOWN = "unknown"
     const val LOCAL = "local"
