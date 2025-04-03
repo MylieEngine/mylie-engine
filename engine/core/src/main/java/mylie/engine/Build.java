@@ -13,7 +13,7 @@ import lombok.Getter;
  * This metadata is loaded from a properties file at runtime.
  */
 @Getter
-public class Build {
+public final class Build {
 	private Build() {
 	}
 	private static final Info INFO = new Info();
