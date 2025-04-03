@@ -1,0 +1,31 @@
+[versions]
+lombok = "1.18.38"
+logback = "1.5.18"
+slf4j = "2.0.17"
+spotless = "7.0.2"
+sonarqube= "6.1.0.5360"
+palantirGitVersion="3.2.0"
+mockito="5.16.1"
+junit="5.12.1"
+junit-platform = "1.12.1"
+
+[libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+logging-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+logging-runtime = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+mockito = { group = "org.mockito", name = "mockito-core",version.ref = "mockito"}
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-platform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+
+
+[bundles]
+junit = ["junit-platform","junit-jupiter","junit-jupiter-api"]
+
+
+
+[plugins]
+spotless={id= "com.diffplug.spotless", version.ref="spotless"}
+palantirGitVersion={id= "com.palantir.git-version", version.ref="palantirGitVersion"}
+sonarqube={id= "org.sonarqube", version.ref="sonarqube"}
