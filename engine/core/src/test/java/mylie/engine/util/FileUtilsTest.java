@@ -10,14 +10,14 @@ class FileUtilsTest {
 
 	@Test
 	void testLoadExistingProperties() {
-		Properties props = FileUtils.loadPropertiesFromClasspath("/mylie/engine/version.properties");
+		Properties props = FileUtils.loadProperties("/mylie/engine/version.properties");
 		assertNotNull(props);
 	}
 
 	@Test
 	void testLoadNonExistingProperties() {
 		String file = "/mylie/engine/version.properties.nonexisting";
-		FileNotFound exception = assertThrows(FileNotFound.class, () -> FileUtils.loadPropertiesFromClasspath(file));
+		FileNotFound exception = assertThrows(FileNotFound.class, () -> FileUtils.loadProperties(file));
 		assertEquals(file, exception.file());
 	}
 }

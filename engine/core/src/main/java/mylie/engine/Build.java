@@ -105,7 +105,7 @@ public final class Build {
 		private final String buildTime;
 
 		private Info() {
-			BUILD_INFO = loadPropertiesFromClasspath("/mylie/engine/version.properties");
+			BUILD_INFO = loadProperties("/mylie/engine/version.properties");
 			engineVersion = BUILD_INFO.getProperty("version", UNKNOWN);
 			lastTag = BUILD_INFO.getProperty("lastTag", UNKNOWN);
 			commitDistance = BUILD_INFO.getProperty("commitDistance", UNKNOWN);
