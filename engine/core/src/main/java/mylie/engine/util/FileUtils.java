@@ -16,8 +16,11 @@ public final class FileUtils {
 	public static Properties loadPropertiesFromClasspath(String path) {
 		Properties props = new Properties();
 		try (InputStream is = loadFromClasspath(path)) {
+			if (is == null) {
+				throw new FileNotFound(path, null);
+			}
 			props.load(is);
-		} catch (IOException | NullPointerException ioException) {
+		} catch (IOException ioException) {
 			throw new FileNotFound(path, ioException);
 		}
 		return props;
