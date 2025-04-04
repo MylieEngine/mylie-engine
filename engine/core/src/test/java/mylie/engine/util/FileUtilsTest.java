@@ -3,6 +3,7 @@ package mylie.engine.util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Properties;
+import mylie.engine.util.exceptions.FileNotFound;
 import org.junit.jupiter.api.Test;
 
 class FileUtilsTest {
@@ -15,9 +16,8 @@ class FileUtilsTest {
 
 	@Test
 	void testLoadNonExistingProperties() {
-		Exception e = assertThrows(RuntimeException.class,
-				() -> FileUtils.loadPropertiesFromClasspath("/mylie/engine/version.properties.nonexisting"));
-		assertTrue(e.getMessage()
-				.contains("Failed to load properties from classpath: /mylie/engine/version.properties.nonexisting"));
+		String file = "/mylie/engine/version.properties.nonexisting";
+		FileNotFound exception = assertThrows(FileNotFound.class, () -> FileUtils.loadPropertiesFromClasspath(file));
+		assertEquals(file, exception.file());
 	}
 }
