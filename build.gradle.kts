@@ -46,6 +46,13 @@ subprojects {
     afterEvaluate {
         plugins.withId("java-base") {
             apply(plugin = libs.plugins.spotless.get().pluginId)
+            apply(plugin = "jacoco")
+            tasks.withType(JacocoReport::class.java).all {
+                dependsOn(tasks.findByName("test"))
+                reports {
+                    xml.required.set(true)
+                }
+            }
             dependencies {
                 val compileOnly by configurations
                 val annotationProcessor by configurations
