@@ -1,17 +1,17 @@
 package mylie.engine;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import static mylie.engine.util.FileUtils.*;
+
 import java.util.Properties;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Build class provides a set of static methods to retrieve metadata
  * about the build, such as engine version, Git information, and build time.
  * This metadata is loaded from a properties file at runtime.
  */
+@Slf4j
 @Getter
 public final class Build {
 	private Build() {
@@ -91,8 +91,11 @@ public final class Build {
 	}
 
 	@Getter
-	private static class Info {
-		final String engineVersion;
+	private static final class Info {
+		private static final String UNKNOWN = "unknown";
+		private final Properties BUILD_INFO;
+
+		private final String engineVersion;
 		private final String lastTag;
 		private final String commitDistance;
 		private final String gitHash;
@@ -102,25 +105,15 @@ public final class Build {
 		private final String buildTime;
 
 		private Info() {
-			Properties properties = new Properties();
-			try (InputStream versionPropertiesStream = Info.class
-					.getResourceAsStream("/mylie/engine/version.properties")) {
-				if (versionPropertiesStream == null) {
-					throw new IllegalStateException("Version properties file does not exist");
-				}
-				properties.load(new InputStreamReader(versionPropertiesStream, StandardCharsets.UTF_8));
-			} catch (IOException e) {
-				throw new UnsupportedOperationException(e);
-			}
-
-			this.engineVersion = properties.getProperty("version");
-			this.lastTag = properties.getProperty("lastTag");
-			this.commitDistance = properties.getProperty("commitDistance");
-			this.gitHash = properties.getProperty("gitHash");
-			this.gitHashFull = properties.getProperty("gitHashFull");
-			this.branchName = properties.getProperty("branchName");
-			this.isCleanTag = properties.getProperty("isCleanTag");
-			this.buildTime = properties.getProperty("buildTime");
+			BUILD_INFO = loadPropertiesFromClasspath("/mylie/engine/version.properties");
+			engineVersion = BUILD_INFO.getProperty("version", UNKNOWN);
+			lastTag = BUILD_INFO.getProperty("lastTag", UNKNOWN);
+			commitDistance = BUILD_INFO.getProperty("commitDistance", UNKNOWN);
+			gitHash = BUILD_INFO.getProperty("gitHash", UNKNOWN);
+			gitHashFull = BUILD_INFO.getProperty("gitHashFull", UNKNOWN);
+			branchName = BUILD_INFO.getProperty("branchName", UNKNOWN);
+			isCleanTag = BUILD_INFO.getProperty("isCleanTag", UNKNOWN);
+			buildTime = BUILD_INFO.getProperty("buildTime", UNKNOWN);
 		}
 	}
 }
