@@ -20,7 +20,6 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     sourceDirectories.from(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
     classDirectories.from(subprojects.map { it.the<SourceSetContainer>()["main"].output })
     executionData.from(subprojects.map { it.tasks.named<JacocoReport>("jacocoTestReport").get().executionData })
-
     reports {
         xml.required.set(true)
     }
