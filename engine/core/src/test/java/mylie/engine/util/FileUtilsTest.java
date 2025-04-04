@@ -18,6 +18,11 @@ class FileUtilsTest {
 	void testLoadNonExistingProperties() {
 		String file = "/mylie/engine/version.properties.nonexisting";
 		FileNotFound exception = assertThrows(FileNotFound.class, () -> FileUtils.loadPropertiesFromClasspath(file));
-		assertEquals(file, exception.file());
+		String fileName = getFileName(exception);
+		assertEquals(file, fileName);
+	}
+
+	private String getFileName(FileNotFound exception) {
+		return exception.file();
 	}
 }
