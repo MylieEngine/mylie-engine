@@ -35,6 +35,9 @@ jobs:
       - name: Run Tests
         run: ./gradlew test jacocoRootReport
 
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
         with:
