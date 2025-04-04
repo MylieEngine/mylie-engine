@@ -35,11 +35,8 @@ jobs:
       - name: Run Tests
         run: ./gradlew test jacocoRootReport
 
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@master
-
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1.3.0
+      - name: Run codacy.yml-coverage-reporter
+        uses: codacy.yml/codacy.yml-coverage-reporter-action@v1.3.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
