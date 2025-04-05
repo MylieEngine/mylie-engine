@@ -1,5 +1,6 @@
 package mylie.engine.core;
 
+import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,14 @@ public class ComponentManager {
 	}
 
 	public <T extends Component> void addComponent(Class<T> component) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		try {
+			Constructor<T> declaredConstructor = component.getDeclaredConstructor(ComponentManager.class);
+			T instance = declaredConstructor.newInstance(this);
+			components.add(instance);
+			instance.onAdded();
+		} catch (Exception e) {
+			log.error("Failed to add component < {} >", component.getSimpleName(), e);
+		}
 	}
 
 	public <T extends Component> T component(Class<T> type) {
@@ -25,10 +33,12 @@ public class ComponentManager {
 		return null;
 	}
 
-	public <T extends Component> void removeComponent(T component) {
+	public <T extends Component> T removeComponent(T component) {
 		boolean removed = components.remove(component);
 		if (!removed) {
 			log.warn("Component < {} > not found", component.getClass().getSimpleName());
+			return null;
 		}
+		return component;
 	}
 }
