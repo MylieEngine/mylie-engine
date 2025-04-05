@@ -23,7 +23,7 @@ public class ComponentManager {
 		}
 		log.warn("No component of type < {} > found", type.getSimpleName());
 		return null;
-	};
+	}
 
 	public <T extends Component> void removeComponent(T component) {
 		boolean removed = components.remove(component);
