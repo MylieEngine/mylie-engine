@@ -1,6 +1,5 @@
 package mylie.engine.core;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,6 @@ public class ComponentManagerTest {
 	@BeforeEach
 	void setUp() {
 		manager = new ComponentManager();
-	}
-
-	@AfterEach
-	void tearDown() {
-		manager = null;
 	}
 
 	@Test
@@ -49,6 +43,7 @@ public class ComponentManagerTest {
 		Assertions.assertNull(manager.component(ComponentA.class));
 	}
 
+	@Test
 	void testRemoveNotExistingComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
 		manager.addComponent(ComponentA.class);
