@@ -6,7 +6,7 @@ import mylie.engine.TestUtils;
 import org.junit.jupiter.api.Test;
 
 class ExceptionsTest {
-
+	private static final String ROOT_CAUSE_MESSAGE = "Root cause message";
 	/**
 	 * Test class for the `Exceptions` utility class, specifically for verifying the functionality
 	 * of the `getRootCause` method. The `getRootCause` method identifies the root cause of a
@@ -16,20 +16,20 @@ class ExceptionsTest {
 	@Test
 	void testGetRootCauseWithSingleException() {
 		// Arrange
-		Exception exception = new Exception("Root cause");
+		Exception exception = new Exception(ROOT_CAUSE_MESSAGE);
 
 		// Act
 		Throwable rootCause = Exceptions.getRootCause(exception);
 
 		// Assert
 		assertEquals(exception, rootCause);
-		assertEquals("Root cause", rootCause.getMessage());
+		assertEquals(ROOT_CAUSE_MESSAGE, rootCause.getMessage());
 	}
 
 	@Test
 	void testGetRootCauseWithNestedExceptions() {
 		// Arrange
-		Throwable rootCause = new Exception("Root cause");
+		Throwable rootCause = new Exception(ROOT_CAUSE_MESSAGE);
 		Throwable middleCause = new Exception("Middle cause", rootCause);
 		Throwable topException = new Exception("Top level exception", middleCause);
 
@@ -38,7 +38,7 @@ class ExceptionsTest {
 
 		// Assert
 		assertEquals(rootCause, result);
-		assertEquals("Root cause", result.getMessage());
+		assertEquals(ROOT_CAUSE_MESSAGE, result.getMessage());
 	}
 
 	@Test
@@ -47,7 +47,7 @@ class ExceptionsTest {
 		Throwable level3 = new Exception("Level 3");
 		Throwable level2 = new Exception("Level 2", level3);
 		Throwable level1 = new Exception("Level 1", level2);
-		Throwable root = new Exception("Root", level1);
+		Throwable root = new Exception(ROOT_CAUSE_MESSAGE, level1);
 
 		// Act
 		Throwable result = Exceptions.getRootCause(root);
