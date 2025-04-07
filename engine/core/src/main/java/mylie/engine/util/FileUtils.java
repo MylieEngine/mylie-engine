@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import mylie.engine.util.exceptions.FileNotFound;
+import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class FileUtils {
 	private FileUtils() {
+		throw new IllegalInstantiationException(FileUtils.class);
 	}
 
 	public static InputStream loadFile(String path) {
