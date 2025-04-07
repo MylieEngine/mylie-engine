@@ -28,6 +28,7 @@ public class Timer extends Component {
 		newFrameId++;
 		double newDelta=elapsed/1000000000.0;
 		currentTime=new Time(newFrameId,newDelta,newDelta*settings.simulationSpeed(),now,newTimeNanosSimulation);
+		lastUpdate=now;
 	}
 
 	@Getter(AccessLevel.PROTECTED)
