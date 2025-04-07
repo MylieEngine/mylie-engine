@@ -112,5 +112,9 @@ public class ComponentManagerTest {
 			super(manager);
 			this.name = name;
 		}
+
+		public String name() {
+			return name;
+		}
 	}
 }
