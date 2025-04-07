@@ -5,6 +5,7 @@ import static mylie.engine.util.FileUtils.*;
 import java.util.Properties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 /**
  * The Build class provides a set of static methods to retrieve metadata
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public final class Build {
 	private Build() {
+		throw new IllegalInstantiationException(Build.class);
 	}
 	private static final Info INFO = new Info();
 

@@ -3,6 +3,7 @@ package mylie.engine.util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Properties;
+import mylie.engine.TestUtils;
 import mylie.engine.util.exceptions.FileNotFound;
 import org.junit.jupiter.api.Test;
 
@@ -19,5 +20,10 @@ class FileUtilsTest {
 		String file = "/mylie/engine/version.properties.nonexisting";
 		FileNotFound exception = assertThrows(FileNotFound.class, () -> FileUtils.loadProperties(file));
 		assertEquals(file, exception.file());
+	}
+
+	@Test
+	public void testInstantiation() {
+		TestUtils.testUtilityInstantiation(FileUtils.class);
 	}
 }

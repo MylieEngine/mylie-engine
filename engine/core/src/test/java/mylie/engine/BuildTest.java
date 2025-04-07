@@ -15,4 +15,9 @@ public class BuildTest {
 		Assertions.assertNotNull(Build.branchName());
 		Assertions.assertNotNull(Build.isCleanTag());
 	}
+
+	@Test
+	public void testInstantiation() {
+		TestUtils.testUtilityInstantiation(Build.class);
+	}
 }
