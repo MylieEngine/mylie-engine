@@ -12,7 +12,7 @@ public class TestUtils {
 	public static void testUtilityInstantiation(Class<?> clazz) {
 		Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
 		constructor.setAccessible(true);
-		Exception exception = Assertions.assertThrows(Exception.class, () -> constructor.newInstance());
+		Exception exception = Assertions.assertThrows(Exception.class, constructor::newInstance);
 		IllegalInstantiationException instantiationException = (IllegalInstantiationException) Exceptions
 				.getRootCause(exception);
 		Assertions.assertEquals("Class " + clazz.getName() + " cannot be instantiated.",
