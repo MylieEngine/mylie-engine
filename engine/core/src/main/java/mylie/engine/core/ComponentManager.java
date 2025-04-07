@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import mylie.engine.util.exceptions.ConstructorNotFoundException;
+
 @Slf4j
 public class ComponentManager {
 	private final List<Component> components;
@@ -22,6 +24,7 @@ public class ComponentManager {
 		} catch (InvocationTargetException | NoSuchMethodException | InstantiationException
 				| IllegalAccessException e) {
 			log.error("Failed to add component < {} >", component.getSimpleName(), e);
+			throw new ConstructorNotFoundException(component, ComponentManager.class);
 		}
 	}
 
@@ -41,6 +44,7 @@ public class ComponentManager {
 			log.warn("Component < {} > not found", component.getClass().getSimpleName());
 			return null;
 		}
+		component.onRemoved();
 		return component;
 	}
 }
