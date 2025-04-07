@@ -5,7 +5,7 @@ import mylie.engine.util.exceptions.Exceptions;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 import org.junit.jupiter.api.Assertions;
 
-public class TestUtils {
+public final class TestUtils {
 	private TestUtils() {
 
 	}
