@@ -1,5 +1,8 @@
 package mylie.engine.util.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class IllegalInstantiationException extends RuntimeException {
 	private final Class<?> clazz;
 
