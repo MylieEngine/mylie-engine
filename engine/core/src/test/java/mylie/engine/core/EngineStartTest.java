@@ -8,7 +8,7 @@ public class EngineStartTest {
 
 	@Test
 	public void initializePlatform() {
-		EngineSettings engineSettings = Platform.initialize(TestPlatform.class);
+		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
 		Assertions.assertNotNull(engineSettings);
 		Assertions.assertDoesNotThrow(() -> Engine.initialize(engineSettings));
 		Assertions.assertDoesNotThrow(Engine::update);
