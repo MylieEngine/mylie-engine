@@ -12,11 +12,6 @@ public class VaultTest {
 		vault = new Vault(null);
 	}
 
-	@AfterEach
-	public void tearDown() {
-		vault = null;
-	}
-
 	@Test
 	public void testAddItem() {
 		Assertions.assertNull(vault.item(String.class));
