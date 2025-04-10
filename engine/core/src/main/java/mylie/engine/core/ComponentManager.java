@@ -1,11 +1,9 @@
 package mylie.engine.core;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import mylie.engine.util.exceptions.ConstructorNotFoundException;
+import mylie.engine.util.ClassUtils;
 
 @Slf4j
 public class ComponentManager {
@@ -15,17 +13,11 @@ public class ComponentManager {
 		components = new LinkedList<>();
 	}
 
-	public <T extends Component> void addComponent(Class<T> component) {
-		try {
-			Constructor<T> declaredConstructor = component.getDeclaredConstructor(ComponentManager.class);
-			T instance = declaredConstructor.newInstance(this);
-			components.add(instance);
-			instance.onAdded();
-		} catch (InvocationTargetException | NoSuchMethodException | InstantiationException
-				| IllegalAccessException e) {
-			log.error("Failed to add component < {} >", component.getSimpleName(), e);
-			throw new ConstructorNotFoundException(component, ComponentManager.class);
-		}
+	public <T extends Component> T addComponent(Class<T> component) {
+		T instance = ClassUtils.newInstance(component, this);
+		components.add(instance);
+		instance.onAdded();
+		return instance;
 	}
 
 	public <T extends Component> T component(Class<T> type) {
