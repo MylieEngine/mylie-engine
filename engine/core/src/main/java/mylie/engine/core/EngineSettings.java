@@ -8,6 +8,7 @@ import lombok.Setter;
 public class EngineSettings {
 
 	private Timer.Settings timerSettings;
+	private boolean handleRestarts = true;
 	EngineSettings() {
 
 	}
