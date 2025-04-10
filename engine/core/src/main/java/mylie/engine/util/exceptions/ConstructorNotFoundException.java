@@ -17,8 +17,8 @@ public class ConstructorNotFoundException extends RuntimeException {
 	 * @param clazz          the class for which the constructor was not found
 	 * @param parameterTypes the parameter types of the missing constructor
 	 */
-	public ConstructorNotFoundException(Class<?> clazz, Class<?>... parameterTypes) {
+	public ConstructorNotFoundException(Throwable t, Class<?> clazz, Class<?>... parameterTypes) {
 		super("Constructor not found for class " + clazz.getName() + " with parameters "
-				+ Arrays.toString(parameterTypes));
+				+ Arrays.toString(parameterTypes), t);
 	}
 }
