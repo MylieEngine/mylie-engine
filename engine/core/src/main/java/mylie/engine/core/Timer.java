@@ -12,7 +12,7 @@ public class Timer extends Component {
 	@Getter(AccessLevel.PUBLIC)
 	private Time currentTime;
 	private long lastUpdate;
-	private Settings settings;
+	private final Settings settings;
 	public Timer(ComponentManager manager) {
 		super(manager);
 		EngineSettings engineSettings = component(Vault.class).item(EngineSettings.class);
