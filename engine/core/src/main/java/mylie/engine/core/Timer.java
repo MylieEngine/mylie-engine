@@ -13,19 +13,21 @@ public class Timer extends Component {
 	private Time currentTime;
 	private long lastUpdate;
 	@Getter
-	private Settings settings;
+	final private Settings settings;
+
 	public Timer(ComponentManager manager) {
 		super(manager);
 		Vault component = component(Vault.class);
 		EngineSettings engineSettings = component == null ? null : component.item(EngineSettings.class);
 		if (engineSettings != null) {
-			settings = engineSettings.timerSettings();
-		}
-		if (settings == null) {
-			settings = new Settings();
-			if (engineSettings != null) {
+			if (engineSettings.timerSettings() != null) {
+				settings = engineSettings.timerSettings();
+			} else {
+				settings = new Settings();
 				engineSettings.timerSettings(settings);
 			}
+		} else {
+			settings = new Settings();
 		}
 
 		lastUpdate = System.nanoTime();

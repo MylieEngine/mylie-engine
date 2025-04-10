@@ -18,7 +18,7 @@ public class ImmediateModeTest {
 		Engine.ImmediateMode.shutdown("OK");
 		reason = Engine.ImmediateMode.update();
 		Assertions.assertNotNull(reason);
-        Assertions.assertInstanceOf(ShutdownReason.Normal.class, reason);
+		Assertions.assertInstanceOf(ShutdownReason.Normal.class, reason);
 		Assertions.assertEquals("OK", ((ShutdownReason.Normal) reason).reason());
 	}
 
@@ -34,7 +34,7 @@ public class ImmediateModeTest {
 		Engine.ImmediateMode.shutdown(new RuntimeException());
 		reason = Engine.ImmediateMode.update();
 		Assertions.assertNotNull(reason);
-        Assertions.assertInstanceOf(ShutdownReason.Error.class, reason);
+		Assertions.assertInstanceOf(ShutdownReason.Error.class, reason);
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class ImmediateModeTest {
 		Assertions.assertNull(Engine.ImmediateMode.start(engineSettings));
 		Engine.ImmediateMode.restart();
 		ShutdownReason reason = Engine.ImmediateMode.update();
-        Assertions.assertInstanceOf(ShutdownReason.Restart.class, reason);
+		Assertions.assertInstanceOf(ShutdownReason.Restart.class, reason);
 		Engine.ImmediateMode.start(((ShutdownReason.Restart) (reason)).engineSettings());
 		Engine.ImmediateMode.shutdown("OK");
 		Assertions.assertNotNull(Engine.ImmediateMode.update());
