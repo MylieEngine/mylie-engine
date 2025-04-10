@@ -35,7 +35,7 @@ public class Timer extends Component {
 		long newTimeNanosSimulation = (long) (currentTime.timeNanosSimulation()
 				+ (elapsed * settings.simulationSpeed()));
 		newFrameId++;
-		double newDelta = elapsed / 1000000000.0;
+		double newDelta = elapsed / NANOS_TO_SECONDS;
 		currentTime = new Time(newFrameId, newDelta, newDelta * settings.simulationSpeed(), now,
 				newTimeNanosSimulation);
 		lastUpdate = now;
