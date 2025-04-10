@@ -8,16 +8,16 @@ public final class Engine {
 		throw new IllegalInstantiationException(Engine.class);
 	}
 
-	protected static void initialize(EngineSettings engineSettings) {
+	static void initialize(EngineSettings engineSettings) {
 		core = new Core(engineSettings);
 		core.onInit();
 	}
 
-	protected static void update() {
+	static void update() {
 		core.onUpdate();
 	}
 
-	protected static void destroy() {
+	static void destroy() {
 		core.onDestroy();
 	}
 
