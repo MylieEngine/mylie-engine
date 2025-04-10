@@ -7,7 +7,7 @@ import mylie.engine.core.ComponentManager;
 import mylie.engine.util.exceptions.ConstructorNotFoundException;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
-public class ClassUtils {
+public final class ClassUtils {
 	private ClassUtils() {
 		throw new IllegalInstantiationException(ClassUtils.class);
 	}
