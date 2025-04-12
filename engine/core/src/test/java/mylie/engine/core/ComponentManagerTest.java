@@ -69,19 +69,19 @@ public class ComponentManagerTest {
 		Assertions.assertThrows(ConstructorNotFoundException.class, () -> manager.addComponent(IllegalComponent.class));
 	}
 
-	private static class ComponentA extends Component {
+	public static class ComponentA extends Component {
 		public ComponentA(ComponentManager manager) {
 			super(manager);
 		}
 	}
 
-	private static class ComponentB extends Component {
+	public static class ComponentB extends Component {
 		public ComponentB(ComponentManager manager) {
 			super(manager);
 		}
 	}
 
-	private static class ComponentC extends Component {
+	public static class ComponentC extends Component {
 		public ComponentC(ComponentManager manager) {
 			super(manager);
 		}
@@ -106,7 +106,7 @@ public class ComponentManagerTest {
 		}
 	}
 
-	private static class IllegalComponent extends Component {
+	public static class IllegalComponent extends Component {
 		private final String name;
 		public IllegalComponent(ComponentManager manager, String name) {
 			super(manager);

@@ -18,7 +18,7 @@ public abstract class Component {
 	}
 
 	protected final <T extends Component> T component(Class<T> type) {
-		return manager.component(type);
+		return manager == null ? null : manager.component(type);
 	}
 
 	protected final <T extends Component> void addComponent(Class<T> component) {
