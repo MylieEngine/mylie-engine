@@ -2,6 +2,8 @@ package mylie.engine.core.async;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.Component;
 import mylie.engine.core.ComponentManager;
@@ -88,6 +90,7 @@ public final class Scheduler extends Component {
 		}
 
 		class SubmitExecutor implements TaskExecutor {
+			@Getter
 			private final Target target;
 			private final Consumer<Runnable> drain;
 
