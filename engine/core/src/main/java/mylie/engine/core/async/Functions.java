@@ -2,7 +2,7 @@ package mylie.engine.core.async;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-public class Functions {
+public final class Functions {
 	private Functions() {
 	}
 	@Getter(AccessLevel.PACKAGE)

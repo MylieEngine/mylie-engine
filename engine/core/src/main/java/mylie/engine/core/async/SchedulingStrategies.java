@@ -16,9 +16,18 @@ public class SchedulingStrategies {
 				return new SubmitExecutor(target, drain);
 			}
 		}
+
+		@Override
+		public boolean multiThread() {
+			return false;
+		}
 	}
 
 	abstract static class MultiThread implements Scheduler.SchedulingStrategy {
+		@Override
+		public boolean multiThread() {
+			return true;
+		}
 
 		static class ExecutorExecutor implements TaskExecutor {
 			private final ExecutorService executor;
@@ -35,16 +44,16 @@ public class SchedulingStrategies {
 	}
 
 	public static class MultiThreadExecutor extends MultiThread {
-		private final ExecutorService executor;
+		private final ExecutorService executorService;
 
-		public MultiThreadExecutor(ExecutorService executor) {
-			this.executor = executor;
+		public MultiThreadExecutor(ExecutorService executorService) {
+			this.executorService = executorService;
 		}
 
 		@Override
 		public TaskExecutor executor(Target target, Consumer<Runnable> drain) {
 			if (target == Target.BACKGROUND) {
-				return new ExecutorExecutor(executor);
+				return new ExecutorExecutor(executorService);
 			} else {
 				return new SubmitExecutor(target, drain);
 			}

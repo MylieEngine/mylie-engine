@@ -1,5 +1,6 @@
 package mylie.engine.core.async;
 
+import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.LinkedList;
@@ -11,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class AsyncTest {
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testInit(Scheduler scheduler) {
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(Cache.NO));
@@ -20,7 +21,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testAsync(Scheduler scheduler) {
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -36,7 +37,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testDirectExecution(Scheduler scheduler) {
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -48,7 +49,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testNoTarget(Scheduler scheduler) {
 		Target target = new Target("test", false);
 		AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -58,7 +59,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testDoubleTarget(Scheduler scheduler) {
 		Target target = new Target("test", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
@@ -70,7 +71,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testNotManagedTarget(Scheduler scheduler) {
 		Target target = new Target("test", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
@@ -91,7 +92,7 @@ class AsyncTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("mylie.engine.core.async.AsyncTestData#schedulerProvider")
+	@MethodSource(SCHEDULER_SOURCE)
 	public void testOneFrameCache(Scheduler scheduler) {
 		Target target = new Target("test", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
