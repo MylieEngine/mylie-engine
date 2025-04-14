@@ -81,7 +81,7 @@ class AsyncTest {
 		Result<Boolean> result = Async.async(scheduler, ExecutionMode.DIRECT, target, Cache.NO, 0,
 				AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger);
 		assertEquals(1, taskQueue.size());
-		if(!taskQueue.isEmpty()){
+		if (!taskQueue.isEmpty()) {
 			taskQueue.poll().run();
 		}
 		assertTrue(result.get());
