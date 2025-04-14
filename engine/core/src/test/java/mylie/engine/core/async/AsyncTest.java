@@ -51,7 +51,7 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testNoTarget(Scheduler scheduler) {
-		Target target = new Target("test", false);
+		Target target = new Target("test1", false);
 		AtomicInteger atomicInteger = new AtomicInteger(0);
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		assertThrows(IllegalArgumentException.class, () -> Async.async(scheduler, ExecutionMode.DIRECT, target,
@@ -61,7 +61,7 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testDoubleTarget(Scheduler scheduler) {
-		Target target = new Target("test", false);
+		Target target = new Target("test2", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
 		assertDoesNotThrow(() -> scheduler.register(target, taskQueue::add));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(target, taskQueue::add));
@@ -73,7 +73,7 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testNotManagedTarget(Scheduler scheduler) {
-		Target target = new Target("test", false);
+		Target target = new Target("test3", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
 		AtomicInteger atomicInteger = new AtomicInteger(0);
 		scheduler.register(Cache.NO);
@@ -94,7 +94,7 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testOneFrameCache(Scheduler scheduler) {
-		Target target = new Target("test", false);
+		Target target = new Target("test4", false);
 		Queue<Runnable> taskQueue = new LinkedList<>();
 		AtomicInteger atomicInteger = new AtomicInteger(0);
 		scheduler.register(Cache.ONE_FRAME);
