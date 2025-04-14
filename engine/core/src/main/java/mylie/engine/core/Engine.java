@@ -13,6 +13,31 @@ public final class Engine {
 		core.onInit();
 	}
 
+	public static void shutdown(ShutdownReason reason) {
+		core.shutdownReason(reason);
+	}
+
+	public static void shutdown(Throwable reason) {
+		if (core == null) {
+			throw new IllegalStateException("Engine is not running");
+		}
+		Engine.shutdown(new ShutdownReason.Error(reason));
+	}
+
+	public static void shutdown(String reason) {
+		if (core == null) {
+			throw new IllegalStateException("Engine is not running");
+		}
+		Engine.shutdown(new ShutdownReason.Normal(reason));
+	}
+
+	public static void restart() {
+		if (core == null) {
+			throw new IllegalStateException("Engine is not running");
+		}
+		Engine.shutdown(new ShutdownReason.Restart(core.settings()));
+	}
+
 	static void update() {
 		core.onUpdate();
 	}
@@ -56,24 +81,15 @@ public final class Engine {
 		}
 
 		public static void shutdown(String reason) {
-			if (core == null) {
-				throw new IllegalStateException("Engine is not running");
-			}
-			core.shutdownReason(new ShutdownReason.Normal(reason));
+			Engine.shutdown(reason);
 		}
 
 		public static void shutdown(Throwable reason) {
-			if (core == null) {
-				throw new IllegalStateException("Engine is not running");
-			}
-			core.shutdownReason(new ShutdownReason.Error(reason));
+			Engine.shutdown(reason);
 		}
 
 		public static void restart() {
-			if (core == null) {
-				throw new IllegalStateException("Engine is not running");
-			}
-			core.shutdownReason(new ShutdownReason.Restart(core.settings()));
+			Engine.restart();
 		}
 	}
 }
