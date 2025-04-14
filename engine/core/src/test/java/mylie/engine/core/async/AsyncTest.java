@@ -66,6 +66,7 @@ class AsyncTest {
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(target, taskQueue::add));
 		assertDoesNotThrow(() -> scheduler.unregister(target));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.unregister(target));
+		assertEquals(0, taskQueue.size());
 	}
 
 	@ParameterizedTest
