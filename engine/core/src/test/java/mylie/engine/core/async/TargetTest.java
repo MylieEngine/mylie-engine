@@ -5,22 +5,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class TargetTest {
+	private static final String TEST_NAME = "test";
+	private static final String TEST_NAME2 = "test2";
 	@Test
 	public void testInstantiation() {
-		Target target = new Target("Test");
-		assertEquals("Test", target.name());
+		Target target = new Target(TEST_NAME);
+		assertEquals(TEST_NAME, target.name());
 		assertTrue(target.bindable());
 		assertFalse(target.managed());
 
-		Target target2 = new Target("Test2", false);
-		assertEquals("Test2", target2.name());
+		Target target2 = new Target(TEST_NAME2, false);
+		assertEquals(TEST_NAME2, target2.name());
 		assertTrue(target2.bindable());
 		assertFalse(target2.managed());
 	}
 
 	@Test
 	public void testDoubleBind() {
-		Target target = new Target("Test");
+		Target target = new Target(TEST_NAME);
 		target.bind();
 		IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, target::bind);
 		assertEquals("Target < Test > is already bound to current thread", illegalStateException.getMessage());
@@ -29,7 +31,7 @@ class TargetTest {
 
 	@Test
 	public void testUnbind() {
-		Target target = new Target("Test");
+		Target target = new Target(TEST_NAME);
 		IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, target::release);
 		assertEquals("Target < Test > is not bound to current thread", illegalStateException.getMessage());
 		assertDoesNotThrow(target::bind);
@@ -38,7 +40,7 @@ class TargetTest {
 
 	@Test
 	public void testCurrent() {
-		Target target = new Target("Test");
+		Target target = new Target(TEST_NAME);
 		assertFalse(target.current());
 		assertDoesNotThrow(target::bind);
 		assertTrue(target.current());
@@ -48,7 +50,7 @@ class TargetTest {
 
 	@Test
 	public void testNotBindable() {
-		Target target = new Target("Test", true, false);
+		Target target = new Target(TEST_NAME, true, false);
 		assertFalse(target.bindable());
 		assertTrue(target.managed());
 		IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, target::bind);
