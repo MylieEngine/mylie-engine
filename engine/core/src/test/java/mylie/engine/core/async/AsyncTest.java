@@ -10,6 +10,8 @@ import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import mylie.engine.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -199,6 +201,12 @@ class AsyncTest {
 		}
 		assertEquals(1, atomicInteger.get());
 		scheduler.unregister(Cache.ONE_FRAME);
+	}
+
+	@Test
+	public void testInstantiation() {
+		TestUtils.testUtilityInstantiation(Async.class);
+		TestUtils.testUtilityInstantiation(Functions.class);
 	}
 
 }

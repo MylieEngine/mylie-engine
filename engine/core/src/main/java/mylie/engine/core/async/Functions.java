@@ -2,9 +2,13 @@ package mylie.engine.core.async;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import mylie.engine.util.exceptions.IllegalInstantiationException;
+
 public final class Functions {
 	private Functions() {
+		throw new IllegalInstantiationException(Functions.class);
 	}
+
 	@Getter(AccessLevel.PACKAGE)
 	abstract static class Base {
 		private final String id;

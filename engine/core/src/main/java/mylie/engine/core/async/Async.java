@@ -3,9 +3,13 @@ package mylie.engine.core.async;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
+import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 @Slf4j
 public class Async {
+	private Async() {
+		throw new IllegalInstantiationException(Async.class);
+	}
 	public static <R> Result<R> async(Scheduler scheduler, ExecutionMode mode, Target target, Cache cache, long version,
 			Functions.Zero<R> function) {
 		Hash hash = new Hash(function);
