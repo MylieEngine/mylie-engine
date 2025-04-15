@@ -25,8 +25,7 @@ class HashTest {
 
 	@Test
 	public void testHashToString() {
-		String args = HELLO;
-		Hash hash = new Hash(AsyncTestData.SELF_LOCKING, args);
+		Hash hash = new Hash(AsyncTestData.SELF_LOCKING, HELLO);
 		Assertions.assertEquals("Hash< " + hash.hashCode() + " >", hash.toString());
 	}
 
