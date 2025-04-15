@@ -4,8 +4,12 @@ import static mylie.engine.core.async.AsyncTestData.INTEGER_ADD;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -158,6 +162,42 @@ class AsyncTest {
 				a, b);
 		assertEquals(15, async.get());
 		scheduler.unregister(Cache.NO);
+	}
+
+	@ParameterizedTest
+	@MethodSource(SCHEDULER_SOURCE)
+	public void testOneFrameLock(Scheduler scheduler) {
+		scheduler.register(Cache.ONE_FRAME);
+		AtomicInteger atomicInteger = new AtomicInteger(0);
+		List<Result<Boolean>> results=new CopyOnWriteArrayList<>();
+		CountDownLatch countDownLatch=new CountDownLatch(1);
+		final int THREADS = 100;
+		CountDownLatch latch = new CountDownLatch(THREADS);
+		for (int i = 0; i < THREADS; i++) {
+			new Thread(() -> {
+				try {
+					countDownLatch.await();
+					results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
+					latch.countDown();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}).start();
+			//results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
+		}
+
+		countDownLatch.countDown();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+			e.printStackTrace();
+        }
+		assertEquals(THREADS, results.size());
+        for (Result<Boolean> result : results) {
+			assertTrue(result.get());
+		}
+		assertEquals(1, atomicInteger.get());
+		scheduler.unregister(Cache.ONE_FRAME);
 	}
 
 }

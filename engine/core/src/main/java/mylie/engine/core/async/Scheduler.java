@@ -2,11 +2,16 @@ package mylie.engine.core.async;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.Component;
 import mylie.engine.core.ComponentManager;
+import mylie.engine.core.EngineSettings;
+import mylie.engine.core.Vault;
+
 @Slf4j
 public final class Scheduler extends Component {
 	private SchedulingStrategy strategy;
@@ -23,7 +28,20 @@ public final class Scheduler extends Component {
 	}
 
 	private void onInitialize() {
+		if(strategy==null){
+			Vault vault = component(Vault.class);
+			if(vault!=null){
+				EngineSettings settings = vault.item(EngineSettings.class);
+				if(settings!=null) {
+					strategy = settings.schedulingStrategy();
+					if(strategy==null) {
+						strategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
+					}
+				}
+			}
+		}
 		taskExecutors.put(Target.BACKGROUND, strategy.executor(Target.BACKGROUND, null));
+
 	}
 
 	public void onUpdate() {
@@ -86,7 +104,7 @@ public final class Scheduler extends Component {
 		}
 	}
 
-	interface SchedulingStrategy {
+	public interface SchedulingStrategy {
 		TaskExecutor executor(Target target, Consumer<Runnable> drain);
 
 		boolean multiThread();

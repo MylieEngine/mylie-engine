@@ -40,7 +40,6 @@ public abstract class Cache {
 
 		@Override
 		<R> void result(Hash hash, Result<R> result) {
-			System.out.println(hash + " " + result);
 			results.put(hash, result);
 		}
 
@@ -86,6 +85,5 @@ public abstract class Cache {
 		Lock getLock(Hash hash) {
 			return null;
 		}
-
 	}
 }

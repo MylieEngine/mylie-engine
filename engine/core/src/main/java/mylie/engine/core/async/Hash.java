@@ -12,7 +12,7 @@ record Hash(Functions.Base function, int value, Object... args) {
 
 	@Override
 	public String toString() {
-		return "Hash: " + value;
+		return "Hash< " + value + " >";
 	}
 
 	@Override
