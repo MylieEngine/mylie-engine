@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 @Slf4j
-public class Async {
+public final class Async {
 	private Async() {
 		throw new IllegalInstantiationException(Async.class);
 	}

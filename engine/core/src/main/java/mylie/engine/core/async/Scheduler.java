@@ -27,20 +27,31 @@ public final class Scheduler extends Component {
 	}
 
 	private void onInitialize() {
+		loadSettings();
+		taskExecutors.put(Target.BACKGROUND, strategy.executor(Target.BACKGROUND, null));
+	}
+
+	private void loadSettings() {
 		if (strategy == null) {
 			Vault vault = component(Vault.class);
-			if (vault != null) {
-				EngineSettings settings = vault.item(EngineSettings.class);
-				if (settings != null) {
-					strategy = settings.schedulingStrategy();
-					if (strategy == null) {
-						strategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
-					}
-				}
+			if (vault == null) {
+				createDefaultStrategy();
+				return;
 			}
+			EngineSettings settings = vault.item(EngineSettings.class);
+			if (settings == null) {
+				createDefaultStrategy();
+				return;
+			}
+			strategy = settings.schedulingStrategy();
 		}
-		taskExecutors.put(Target.BACKGROUND, strategy.executor(Target.BACKGROUND, null));
+		if (strategy == null) {
+			createDefaultStrategy();
+		}
+	}
 
+	private void createDefaultStrategy() {
+		strategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
 	}
 
 	public void onUpdate() {
