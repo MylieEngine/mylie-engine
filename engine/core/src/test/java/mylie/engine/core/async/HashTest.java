@@ -16,8 +16,7 @@ class HashTest {
 	@SuppressWarnings({"AssertBetweenInconvertibleTypes", "SimplifiableAssertion", "EqualsBetweenInconvertibleTypes"})
 	@Test
 	public void testHashNotEquals() {
-		String args = HELLO;
-		Hash hash = new Hash(AsyncTestData.SELF_LOCKING, args);
+		Hash hash = new Hash(AsyncTestData.SELF_LOCKING, HELLO);
 		Hash hash2 = new Hash(AsyncTestData.SELF_LOCKING, "World");
 		Assertions.assertNotEquals(hash, hash2);
 		Assertions.assertNotEquals(HELLO, hash);
