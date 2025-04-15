@@ -2,8 +2,9 @@ package mylie.engine.core.async;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
-
+@Slf4j
 public final class Functions {
 	private Functions() {
 		throw new IllegalInstantiationException(Functions.class);

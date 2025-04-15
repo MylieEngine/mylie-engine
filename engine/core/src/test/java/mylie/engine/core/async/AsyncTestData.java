@@ -28,13 +28,15 @@ final class AsyncTestData {
 		}
 	};
 
+	public static final int SELF_LOCKING_COUNT = 3;
+
 	public static final Functions.Three<Scheduler, Cache, AtomicInteger, Boolean> SELF_LOCKING = new Functions.Three<>(
 			"SELF_LOCKING") {
 
 		@Override
 		protected Boolean execute(Scheduler param0, Cache param2, AtomicInteger param3) {
 			int i = param3.incrementAndGet();
-			if (i < 2) {
+			if (i < SELF_LOCKING_COUNT) {
 				Result<Boolean> result = Async.async(param0, ExecutionMode.ASYNC, Target.BACKGROUND, param2, 0,
 						SELF_LOCKING, param0, param2, param3);
 				result.get();

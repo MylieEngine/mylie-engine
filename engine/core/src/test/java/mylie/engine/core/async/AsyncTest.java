@@ -1,7 +1,6 @@
 package mylie.engine.core.async;
 
-import static mylie.engine.core.async.AsyncTestData.INTEGER_ADD;
-import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
+import static mylie.engine.core.async.AsyncTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.LinkedList;
@@ -136,7 +135,7 @@ class AsyncTest {
 		Result<Boolean> result = Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.NO, 0,
 				AsyncTestData.SELF_LOCKING, scheduler, Cache.NO, atomicInteger);
 		result.get();
-		assertEquals(2, atomicInteger.get());
+		assertEquals(SELF_LOCKING_COUNT, atomicInteger.get());
 		scheduler.unregister(Cache.NO);
 	}
 
