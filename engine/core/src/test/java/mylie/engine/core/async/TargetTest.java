@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class TargetTest {
-	private static final String TEST_NAME = "test";
-	private static final String TEST_NAME2 = "test2";
+	private static final String TEST_NAME = "Test";
+	private static final String TEST_NAME2 = "Test2";
 	@Test
 	public void testInstantiation() {
 		Target target = new Target(TEST_NAME);

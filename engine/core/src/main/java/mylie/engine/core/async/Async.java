@@ -12,6 +12,12 @@ public class Async {
 		return execute(scheduler, mode, target, cache, version, hash, () -> function.execute(p0));
 	}
 
+	public static <R, P0, P1, P2> Result<R> async(Scheduler scheduler, ExecutionMode mode, Target target, Cache cache,
+			long version, Functions.Three<P0, P1, P2, R> function, P0 p0, P1 p1, P2 p2) {
+		Hash hash = new Hash(function, p0, p1, p2);
+		return execute(scheduler, mode, target, cache, version, hash, () -> function.execute(p0, p1, p2));
+	}
+
 	public static <R> Result<R> async(Scheduler scheduler, ExecutionMode mode, Target target, Cache cache, long version,
 			Functions.Zero<R> function) {
 		Hash hash = new Hash(function);

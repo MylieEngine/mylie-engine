@@ -120,4 +120,16 @@ class AsyncTest {
 		scheduler.unregister(Cache.ONE_FRAME);
 		scheduler.unregister(target);
 	}
+
+	@ParameterizedTest
+	@MethodSource(SCHEDULER_SOURCE)
+	public void testSelfLocking(Scheduler scheduler) {
+		scheduler.register(Cache.NO);
+		AtomicInteger atomicInteger = new AtomicInteger(0);
+		Result<Boolean> result = Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.NO, 0,
+				AsyncTestData.SELF_LOCKING, scheduler, Cache.NO, atomicInteger);
+		result.get();
+		assertEquals(2, atomicInteger.get());
+		scheduler.unregister(Cache.NO);
+	}
 }
