@@ -27,15 +27,6 @@ final class AsyncTestData {
 		}
 	};
 
-	public static final Functions.One<AtomicInteger, Boolean> ATOMIC_INT_DECREASE = new Functions.One<>(
-			"ATOMIC_INT_DECREASE") {
-		@Override
-		protected Boolean execute(AtomicInteger param0) {
-			param0.decrementAndGet();
-			return true;
-		}
-	};
-
 	public static final Functions.Three<Scheduler, Cache, AtomicInteger, Boolean> SELF_LOCKING = new Functions.Three<>(
 			"SELF_LOCKING") {
 
@@ -48,6 +39,21 @@ final class AsyncTestData {
 				result.get();
 			}
 			return true;
+		}
+	};
+
+	public static final Functions.Zero<Boolean> THROWS_ILLEGAL_STATE_EXCEPTION = new Functions.Zero<>(
+			"THROWS_ILLEGAL_STATE_EXCEPTION") {
+		@Override
+		protected Boolean execute() {
+			throw new IllegalStateException("Test exception");
+		}
+	};
+
+	public static final Functions.Two<Integer, Integer, Integer> INTEGER_ADD = new Functions.Two<>("INTEGER_ADD") {
+		@Override
+		protected Integer execute(Integer param0, Integer param1) {
+			return param0 + param1;
 		}
 	};
 }

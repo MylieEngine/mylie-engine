@@ -32,6 +32,10 @@ public final class Scheduler extends Component {
 		}
 	}
 
+	public boolean multiThreaded() {
+		return strategy.multiThread();
+	}
+
 	public <R> void executeTask(Target target, Result<R> result) {
 		SchedulingStrategy.TaskExecutor taskExecutor = taskExecutors.get(target);
 		if (taskExecutor == null) {

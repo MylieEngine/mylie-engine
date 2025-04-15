@@ -1,5 +1,6 @@
 package mylie.engine.core.async;
 
+import static mylie.engine.core.async.AsyncTestData.INTEGER_ADD;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,6 +15,7 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testInit(Scheduler scheduler) {
+		scheduler.multiThreaded();
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(Cache.NO));
 		assertDoesNotThrow(() -> scheduler.unregister(Cache.NO));
@@ -132,4 +134,30 @@ class AsyncTest {
 		assertEquals(2, atomicInteger.get());
 		scheduler.unregister(Cache.NO);
 	}
+
+	@ParameterizedTest
+	@MethodSource(SCHEDULER_SOURCE)
+	public void testException(Scheduler scheduler) {
+		scheduler.register(Cache.NO);
+		Result<Boolean> result = Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.NO, 0,
+				AsyncTestData.THROWS_ILLEGAL_STATE_EXCEPTION);
+		Exception exception = assertThrows(Exception.class, result::get);
+		IllegalStateException illegalStateException = assertInstanceOf(IllegalStateException.class,
+				exception.getCause());
+		assertEquals("Test exception", illegalStateException.getMessage());
+		scheduler.unregister(Cache.NO);
+	}
+
+	@ParameterizedTest
+	@MethodSource(SCHEDULER_SOURCE)
+	public void testAdd(Scheduler scheduler) {
+		scheduler.register(Cache.NO);
+		int a = 10;
+		int b = 5;
+		Result<Integer> async = Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.NO, 0, INTEGER_ADD,
+				a, b);
+		assertEquals(15, async.get());
+		scheduler.unregister(Cache.NO);
+	}
+
 }

@@ -2,6 +2,7 @@ package mylie.engine.core.async;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Cache {
@@ -16,10 +17,6 @@ public abstract class Cache {
 	abstract void clear();
 
 	abstract Lock getLock(Hash hash);
-
-	public interface Lock extends AutoCloseable {
-
-	}
 
 	private static abstract class MapCache extends Cache {
 		final java.util.Map<Hash, Result<?>> results;
@@ -59,13 +56,11 @@ public abstract class Cache {
 
 		@Override
 		Lock getLock(Hash hash) {
-			lock.lock();
-			return lock::unlock;
+			return lock;
 		}
 	}
 
 	private static class NoOpCache extends Cache {
-		private static final NoOpLock NO_OP_LOCK = new NoOpLock();
 		@Override
 		<R> Result<R> result(Hash hash, long version) {
 			// Return null intentional
@@ -89,14 +84,8 @@ public abstract class Cache {
 
 		@Override
 		Lock getLock(Hash hash) {
-			return NO_OP_LOCK;
+			return null;
 		}
 
-		private static class NoOpLock implements Lock {
-			@Override
-			public void close() {
-
-			}
-		}
 	}
 }
