@@ -3,7 +3,6 @@ package mylie.engine.core;
 import lombok.Getter;
 import lombok.Setter;
 import mylie.engine.core.async.Scheduler;
-import mylie.engine.core.async.SchedulingStrategies;
 
 @Setter
 @Getter

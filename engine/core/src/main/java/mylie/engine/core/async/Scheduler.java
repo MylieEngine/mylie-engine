@@ -2,7 +2,6 @@ package mylie.engine.core.async;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import lombok.Getter;
@@ -28,13 +27,13 @@ public final class Scheduler extends Component {
 	}
 
 	private void onInitialize() {
-		if(strategy==null){
+		if (strategy == null) {
 			Vault vault = component(Vault.class);
-			if(vault!=null){
+			if (vault != null) {
 				EngineSettings settings = vault.item(EngineSettings.class);
-				if(settings!=null) {
+				if (settings != null) {
 					strategy = settings.schedulingStrategy();
-					if(strategy==null) {
+					if (strategy == null) {
 						strategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
 					}
 				}

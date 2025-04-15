@@ -4,7 +4,6 @@ import static mylie.engine.core.async.AsyncTestData.INTEGER_ADD;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -169,31 +168,33 @@ class AsyncTest {
 	public void testOneFrameLock(Scheduler scheduler) {
 		scheduler.register(Cache.ONE_FRAME);
 		AtomicInteger atomicInteger = new AtomicInteger(0);
-		List<Result<Boolean>> results=new CopyOnWriteArrayList<>();
-		CountDownLatch countDownLatch=new CountDownLatch(1);
+		List<Result<Boolean>> results = new CopyOnWriteArrayList<>();
+		CountDownLatch countDownLatch = new CountDownLatch(1);
 		final int THREADS = 100;
 		CountDownLatch latch = new CountDownLatch(THREADS);
 		for (int i = 0; i < THREADS; i++) {
 			new Thread(() -> {
 				try {
 					countDownLatch.await();
-					results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
+					results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME, 0,
+							AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
 					latch.countDown();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}).start();
-			//results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
+			// results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND,
+			// Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
 		}
 
 		countDownLatch.countDown();
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-        }
+		}
 		assertEquals(THREADS, results.size());
-        for (Result<Boolean> result : results) {
+		for (Result<Boolean> result : results) {
 			assertTrue(result.get());
 		}
 		assertEquals(1, atomicInteger.get());
