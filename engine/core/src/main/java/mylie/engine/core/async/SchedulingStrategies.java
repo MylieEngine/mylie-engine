@@ -1,10 +1,15 @@
 package mylie.engine.core.async;
 
+import mylie.engine.util.exceptions.IllegalInstantiationException;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-public class SchedulingStrategies {
+public final class SchedulingStrategies {
+	private SchedulingStrategies() {
+		throw new IllegalInstantiationException(SchedulingStrategies.class);
+	}
 
 	public static class SingleThread implements Scheduler.SchedulingStrategy {
 		private final DirectExecutor directExecutor = new DirectExecutor();

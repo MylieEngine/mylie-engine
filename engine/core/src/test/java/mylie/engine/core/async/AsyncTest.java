@@ -10,11 +10,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import mylie.engine.TestUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.LoggerFactory;
 
 class AsyncTest {
+
+	@BeforeAll
+	public static void setUp() {
+
+	}
+
 
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
@@ -206,6 +214,7 @@ class AsyncTest {
 	public void testInstantiation() {
 		TestUtils.testUtilityInstantiation(Async.class);
 		TestUtils.testUtilityInstantiation(Functions.class);
+		TestUtils.testUtilityInstantiation(SchedulingStrategies.class);
 	}
 
 }
