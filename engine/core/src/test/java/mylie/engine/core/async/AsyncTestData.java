@@ -9,6 +9,7 @@ final class AsyncTestData {
 	private AsyncTestData() {
 	}
 	public static final String SCHEDULER_SOURCE = "mylie.engine.core.async.AsyncTestData#schedulerProvider";
+	@SuppressWarnings("unused")
 	public static Stream<Scheduler> schedulerProvider() {
 		return Stream.of(new Scheduler(new SchedulingStrategies.SingleThread()),
 				new Scheduler(new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool())),
