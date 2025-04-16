@@ -5,7 +5,6 @@ import static mylie.engine.core.async.Scheduler.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-
 import lombok.Getter;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
