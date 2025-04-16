@@ -1,5 +1,7 @@
 package mylie.engine.core.async;
 
+import static mylie.engine.core.async.Scheduler.*;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -10,10 +12,10 @@ public final class SchedulingStrategies {
 		throw new IllegalInstantiationException(SchedulingStrategies.class);
 	}
 
-	public static class SingleThread implements Scheduler.SchedulingStrategy {
+	public static class SingleThread extends SchedulingStrategy {
 		private final DirectExecutor directExecutor = new DirectExecutor();
 		@Override
-		public TaskExecutor executor(Target target, Consumer<Runnable> drain) {
+		TaskExecutor executor(Target target, Consumer<Runnable> drain) {
 			if (target.managed()) {
 				return directExecutor;
 			} else {
@@ -27,7 +29,7 @@ public final class SchedulingStrategies {
 		}
 	}
 
-	abstract static class MultiThread implements Scheduler.SchedulingStrategy {
+	abstract static class MultiThread extends SchedulingStrategy {
 		@Override
 		public boolean multiThread() {
 			return true;
@@ -55,7 +57,7 @@ public final class SchedulingStrategies {
 		}
 
 		@Override
-		public TaskExecutor executor(Target target, Consumer<Runnable> drain) {
+		TaskExecutor executor(Target target, Consumer<Runnable> drain) {
 			if (target == Target.BACKGROUND) {
 				return new ExecutorExecutor(executorService);
 			} else {

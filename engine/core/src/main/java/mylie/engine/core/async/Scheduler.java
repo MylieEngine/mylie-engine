@@ -122,36 +122,26 @@ public final class Scheduler extends Component {
 		}
 	}
 
-	public interface SchedulingStrategy {
-		TaskExecutor executor(Target target, Consumer<Runnable> drain);
+	static class SubmitExecutor implements SchedulingStrategy.TaskExecutor {
+		@Getter
+		private final Target target;
+		private final Consumer<Runnable> drain;
 
-		boolean multiThread();
-
-		interface TaskExecutor {
-			<R> void execute(Result<R> result);
+		public SubmitExecutor(Target target, Consumer<Runnable> drain) {
+			this.target = target;
+			this.drain = drain;
 		}
 
-		class SubmitExecutor implements TaskExecutor {
-			@Getter
-			private final Target target;
-			private final Consumer<Runnable> drain;
-
-			public SubmitExecutor(Target target, Consumer<Runnable> drain) {
-				this.target = target;
-				this.drain = drain;
-			}
-
-			@Override
-			public <R> void execute(Result<R> result) {
-				drain.accept(() -> Async.executeTask(result));
-			}
+		@Override
+		public <R> void execute(Result<R> result) {
+			drain.accept(() -> Async.executeTask(result));
 		}
+	}
 
-		class DirectExecutor implements TaskExecutor {
-			@Override
-			public <R> void execute(Result<R> result) {
-				Async.executeTask(result);
-			}
+	static class DirectExecutor implements SchedulingStrategy.TaskExecutor {
+		@Override
+		public <R> void execute(Result<R> result) {
+			Async.executeTask(result);
 		}
 	}
 }
