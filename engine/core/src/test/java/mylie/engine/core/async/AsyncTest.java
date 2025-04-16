@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@SuppressWarnings("CallToPrintStackTrace")
 class AsyncTest {
 
 	@BeforeAll
@@ -193,8 +194,6 @@ class AsyncTest {
 					e.printStackTrace();
 				}
 			}).start();
-			// results.add(Async.async(scheduler, ExecutionMode.ASYNC, Target.BACKGROUND,
-			// Cache.ONE_FRAME, 0, AsyncTestData.ATOMIC_INT_INCREASE, atomicInteger));
 		}
 
 		countDownLatch.countDown();
