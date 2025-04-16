@@ -13,12 +13,12 @@ import mylie.engine.core.Vault;
 
 @Slf4j
 public final class Scheduler extends Component {
-	private SchedulingStrategy strategy;
+	private SchedulingStrategy schedulingStrategy;
 	private final Map<Target, SchedulingStrategy.TaskExecutor> taskExecutors = new ConcurrentHashMap<>();
 	private final List<Cache> caches = new ArrayList<>();
 	Scheduler(SchedulingStrategy strategy) {
 		super(null);
-		this.strategy = strategy;
+		this.schedulingStrategy = strategy;
 		onInitialize();
 	}
 	public Scheduler(ComponentManager manager) {
@@ -28,11 +28,11 @@ public final class Scheduler extends Component {
 
 	private void onInitialize() {
 		loadSettings();
-		taskExecutors.put(Target.BACKGROUND, strategy.executor(Target.BACKGROUND, null));
+		taskExecutors.put(Target.BACKGROUND, schedulingStrategy.executor(Target.BACKGROUND, null));
 	}
 
 	private void loadSettings() {
-		if (strategy == null) {
+		if (schedulingStrategy == null) {
 			Vault vault = component(Vault.class);
 			if (vault == null) {
 				createDefaultStrategy();
@@ -43,15 +43,15 @@ public final class Scheduler extends Component {
 				createDefaultStrategy();
 				return;
 			}
-			strategy = settings.schedulingStrategy();
+			schedulingStrategy = settings.schedulingStrategy();
 		}
-		if (strategy == null) {
+		if (schedulingStrategy == null) {
 			createDefaultStrategy();
 		}
 	}
 
 	private void createDefaultStrategy() {
-		strategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
+		schedulingStrategy = new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool());
 	}
 
 	public void onUpdate() {
@@ -65,11 +65,11 @@ public final class Scheduler extends Component {
 			throw new IllegalArgumentException(
 					"Cannot change scheduling strategy to " + strategy + " when multiThreaded is " + multiThreaded());
 		}
-		this.strategy = strategy;
+		this.schedulingStrategy = strategy;
 	}
 
 	public boolean multiThreaded() {
-		return strategy.multiThread();
+		return schedulingStrategy.multiThread();
 	}
 
 	public <R> void executeTask(Target target, Result<R> result) {
@@ -86,7 +86,7 @@ public final class Scheduler extends Component {
 			log.warn("Target< {} > already registered", target.name());
 			throw new IllegalArgumentException("Target< " + target.name() + " > already registered");
 		}
-		SchedulingStrategy.TaskExecutor taskExecutor = strategy.executor(target, drain);
+		SchedulingStrategy.TaskExecutor taskExecutor = schedulingStrategy.executor(target, drain);
 		taskExecutors.put(target, taskExecutor);
 		if (log.isTraceEnabled()) {
 			log.trace("Target< {} > registered", target.name());
