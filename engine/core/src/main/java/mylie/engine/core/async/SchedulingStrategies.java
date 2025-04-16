@@ -5,6 +5,8 @@ import static mylie.engine.core.async.Scheduler.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+
+import lombok.Getter;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class SchedulingStrategies {
@@ -63,6 +65,29 @@ public final class SchedulingStrategies {
 			} else {
 				return new SubmitExecutor(target, drain);
 			}
+		}
+	}
+
+	static class SubmitExecutor implements SchedulingStrategy.TaskExecutor {
+		@Getter
+		private final Target target;
+		private final Consumer<Runnable> drain;
+
+		public SubmitExecutor(Target target, Consumer<Runnable> drain) {
+			this.target = target;
+			this.drain = drain;
+		}
+
+		@Override
+		public <R> void execute(Result<R> result) {
+			drain.accept(() -> Async.executeTask(result));
+		}
+	}
+
+	static class DirectExecutor implements SchedulingStrategy.TaskExecutor {
+		@Override
+		public <R> void execute(Result<R> result) {
+			Async.executeTask(result);
 		}
 	}
 }

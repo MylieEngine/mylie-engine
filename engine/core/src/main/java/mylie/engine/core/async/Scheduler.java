@@ -121,27 +121,4 @@ public final class Scheduler extends Component {
 			log.trace("Cache< {} > unregistered", cache.getClass().getSimpleName());
 		}
 	}
-
-	static class SubmitExecutor implements SchedulingStrategy.TaskExecutor {
-		@Getter
-		private final Target target;
-		private final Consumer<Runnable> drain;
-
-		public SubmitExecutor(Target target, Consumer<Runnable> drain) {
-			this.target = target;
-			this.drain = drain;
-		}
-
-		@Override
-		public <R> void execute(Result<R> result) {
-			drain.accept(() -> Async.executeTask(result));
-		}
-	}
-
-	static class DirectExecutor implements SchedulingStrategy.TaskExecutor {
-		@Override
-		public <R> void execute(Result<R> result) {
-			Async.executeTask(result);
-		}
-	}
 }
