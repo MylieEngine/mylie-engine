@@ -10,6 +10,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import mylie.engine.TestUtils;
+import mylie.engine.core.ComponentManager;
+import mylie.engine.core.Vault;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -213,6 +216,19 @@ class AsyncTest {
 		TestUtils.testUtilityInstantiation(Async.class);
 		TestUtils.testUtilityInstantiation(Functions.class);
 		TestUtils.testUtilityInstantiation(SchedulingStrategies.class);
+	}
+
+	@Test
+	public void testInitWithoutEngine() {
+		ComponentManager componentManager = new ComponentManager();
+		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(Scheduler.class));
+	}
+
+	@Test
+	public void testInitWithoutSettings() {
+		ComponentManager componentManager = new ComponentManager();
+		Assertions.assertNotNull(componentManager.addComponent(Vault.class));
+		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(Scheduler.class));
 	}
 
 }
