@@ -60,6 +60,14 @@ public final class Scheduler extends Component {
 		}
 	}
 
+	public void strategy(SchedulingStrategy strategy) {
+		if (strategy.multiThread() != multiThreaded()) {
+			throw new IllegalArgumentException(
+					"Cannot change scheduling strategy to " + strategy + " when multiThreaded is " + multiThreaded());
+		}
+		this.strategy = strategy;
+	}
+
 	public boolean multiThreaded() {
 		return strategy.multiThread();
 	}
