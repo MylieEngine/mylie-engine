@@ -132,7 +132,7 @@ public final class SchedulingStrategies {
 	static class ThreadBasedWorkerThread extends WorkerThread implements Runnable {
 		private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
 		private final Thread thread;
-		private boolean running = false;
+		private boolean running;
 		public ThreadBasedWorkerThread(Target target) {
 			super(target);
 			this.thread = new Thread(this, target.name());

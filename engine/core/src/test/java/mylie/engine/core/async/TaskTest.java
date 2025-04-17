@@ -2,6 +2,7 @@ package mylie.engine.core.async;
 
 import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -19,10 +20,10 @@ class TaskTest {
 		String taskName2 = "task2";
 		String taskName3 = "task3";
 		String taskName4 = "task4";
-		Task<Boolean> task1 = new TestTask(scheduler, list, taskName1);
-		Task<Boolean> task2 = new TestTask(scheduler, list, taskName2);
-		Task<Boolean> task3 = new TestTask(scheduler, list, taskName3);
-		Task<Boolean> task4 = new TestTask(scheduler, list, taskName4);
+		Task<Boolean> task1 = new AddStringTask(scheduler, list, taskName1);
+		Task<Boolean> task2 = new AddStringTask(scheduler, list, taskName2);
+		Task<Boolean> task3 = new AddStringTask(scheduler, list, taskName3);
+		Task<Boolean> task4 = new AddStringTask(scheduler, list, taskName4);
 		task1.dependencies().add(task2);
 		task1.dependencies().add(task4);
 		task2.dependencies().add(task3);
@@ -36,12 +37,12 @@ class TaskTest {
 		scheduler.unregister(Cache.ONE_FRAME);
 	}
 
-	private static class TestTask extends Task<Boolean> {
+	private static class AddStringTask extends Task<Boolean> {
 		private final Scheduler scheduler;
 		private final List<String> resultList;
 		private final String id;
 
-		public TestTask(Scheduler scheduler, List<String> resultList, String id) {
+		public AddStringTask(Scheduler scheduler, List<String> resultList, String id) {
 			this.scheduler = scheduler;
 			this.resultList = resultList;
 			this.id = id;
@@ -64,9 +65,16 @@ class TaskTest {
 	}
 
 	private static class SaveHashList<T> extends ArrayList<T> {
+		@Serial
+		private static final long serialVersionUID = -3155051513704092918L;
 		@Override
 		public int hashCode() {
 			return System.identityHashCode(this);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return this == obj;
 		}
 	}
 }

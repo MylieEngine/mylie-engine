@@ -49,12 +49,12 @@ public final class Components {
 	abstract static class Base extends Component {
 		private final Task<Boolean> updateTask;
 		@Setter(AccessLevel.PACKAGE)
-		private boolean initialized = false;
+		private boolean initialized;
 		@Setter(AccessLevel.PUBLIC)
 		@Getter(AccessLevel.PUBLIC)
 		private boolean enabled = true;
 		@Setter(AccessLevel.PACKAGE)
-		private boolean currentlyEnabled = false;
+		private boolean currentlyEnabled;
 		Base(ComponentManager manager, ExecutionMode executionMode, Target target, Cache cache) {
 			super(manager);
 			updateTask = new UpdateTask(component(Scheduler.class), executionMode, target, cache,
@@ -102,42 +102,52 @@ public final class Components {
 			private final Base base;
 			@Override
 			protected Result<Boolean> executeTask() {
-				return Async.async(scheduler, executionMode, target, cache, timer.currentTime().frameId(),
-						UPDATE_COMPONENT, base);
+				Functions.One<Base, Boolean> toCall;
+				if (base.manager().running()) {
+					toCall = UPDATE_COMPONENT;
+				} else {
+					toCall = SHUTDOWN_COMPONENT;
+				}
+				return Async.async(scheduler, executionMode, target, cache, timer.currentTime().frameId(), toCall,
+						base);
 			}
 
 			private static final Functions.One<Base, Boolean> UPDATE_COMPONENT = new Functions.One<>(
 					"UPDATE_COMPONENT") {
 				@Override
 				protected Boolean execute(Base base) {
-					System.out.println(base.manager().running());
-					if (base.manager().running()) {
-						if (!base.initialized()) {
-							base.initialized(true);
-							base.onInitialize();
-						}
-						if (base.enabled() != base.currentlyEnabled()) {
-							if (base.enabled()) {
-								base.currentlyEnabled(true);
-								base.onEnable();
-							} else {
-								base.currentlyEnabled(false);
-								base.onDisable();
-							}
-						}
+					if (!base.initialized()) {
+						base.initialized(true);
+						base.onInitialize();
+					}
+					if (base.enabled() != base.currentlyEnabled()) {
 						if (base.enabled()) {
-							base.onUpdate();
-						}
-					} else {
-						if (base.currentlyEnabled()) {
+							base.currentlyEnabled(true);
+							base.onEnable();
+						} else {
 							base.currentlyEnabled(false);
-							base.enabled(false);
 							base.onDisable();
 						}
-						if (base.initialized()) {
-							base.initialized(false);
-							base.onDestroy();
-						}
+					}
+					if (base.enabled()) {
+						base.onUpdate();
+					}
+					return true;
+				}
+			};
+
+			private static final Functions.One<Base, Boolean> SHUTDOWN_COMPONENT = new Functions.One<>(
+					"UPDATE_COMPONENT") {
+				@Override
+				protected Boolean execute(Base base) {
+					if (base.currentlyEnabled()) {
+						base.currentlyEnabled(false);
+						base.enabled(false);
+						base.onDisable();
+					}
+					if (base.initialized()) {
+						base.initialized(false);
+						base.onDestroy();
 					}
 					return true;
 				}
