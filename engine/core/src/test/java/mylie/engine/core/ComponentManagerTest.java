@@ -71,7 +71,7 @@ public class ComponentManagerTest {
 	}
 
 	@Test
-	void testUtilityInstantiation(){
+	void testUtilityInstantiation() {
 		TestUtils.testUtilityInstantiation(Components.class);
 	}
 
@@ -119,6 +119,7 @@ public class ComponentManagerTest {
 			this.name = name;
 		}
 
+		@SuppressWarnings("unused")
 		public String name() {
 			return name;
 		}

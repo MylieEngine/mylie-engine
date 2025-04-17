@@ -19,6 +19,7 @@ public final class AsyncTestData {
 				new Scheduler(new SchedulingStrategies.MultiThreadExecutor(Executors.newFixedThreadPool(4))));
 	}
 	public static final String SCHEDULING_STRATEGIES_SOURCE = "mylie.engine.core.async.AsyncTestData#schedulingStrategies";
+	@SuppressWarnings("unused")
 	public static Stream<SchedulingStrategy> schedulingStrategies() {
 		return Stream.of(new SchedulingStrategies.SingleThread(),
 				new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool()),
