@@ -27,14 +27,14 @@ final class Core {
 	}
 
 	void onInit() {
-		if(log.isTraceEnabled()){
+		if (log.isTraceEnabled()) {
 			log.trace("Initializing...");
 		}
 		componentManager.addComponent(ApplicationManager.class);
 	}
 
 	void onUpdate() {
-		if(log.isTraceEnabled()){
+		if (log.isTraceEnabled()) {
 			log.trace("Updating...");
 		}
 		componentManager.component(Timer.class).onUpdate();
@@ -43,7 +43,7 @@ final class Core {
 	}
 
 	void onDestroy() {
-		if(log.isTraceEnabled()){
+		if (log.isTraceEnabled()) {
 			log.trace("Shutting down...");
 		}
 		componentManager.component(Timer.class).onUpdate();

@@ -1,10 +1,8 @@
 package mylie.engine.core;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +54,7 @@ public class ComponentManager {
 			}
 		}
 		results.forEach(Result::get);
-		if(!running){
+		if (!running) {
 			components.forEach(this::removeComponent);
 		}
 	}

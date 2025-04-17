@@ -14,7 +14,7 @@ public abstract class Cache {
 		scheduler.register(ONE_FRAME);
 	}
 
-    abstract <R> Result<R> result(Hash hash, long version);
+	abstract <R> Result<R> result(Hash hash, long version);
 
 	abstract <R> void result(Hash hash, Result<R> result);
 
