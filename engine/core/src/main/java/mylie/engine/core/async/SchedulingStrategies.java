@@ -57,7 +57,6 @@ public final class SchedulingStrategies {
 
 		static class ExecutorExecutor implements TaskExecutor {
 			private final ExecutorService executor;
-
 			public ExecutorExecutor(ExecutorService executor) {
 				this.executor = executor;
 			}
@@ -65,6 +64,11 @@ public final class SchedulingStrategies {
 			@Override
 			public <R> void execute(Result<R> result) {
 				CompletableFuture.supplyAsync(result::execute, executor);
+			}
+
+			@Override
+			public Consumer<Runnable> drain() {
+				return null;
 			}
 		}
 	}
@@ -100,12 +104,27 @@ public final class SchedulingStrategies {
 		public <R> void execute(Result<R> result) {
 			drain.accept(() -> Async.executeTask(result));
 		}
+
+		@Override
+		public Consumer<Runnable> drain() {
+			return drain;
+		}
 	}
 
-	static class DirectExecutor implements SchedulingStrategy.TaskExecutor {
+	static class DirectExecutor implements SchedulingStrategy.TaskExecutor,Consumer<Runnable>{
 		@Override
 		public <R> void execute(Result<R> result) {
 			Async.executeTask(result);
+		}
+
+		@Override
+		public Consumer<Runnable> drain() {
+			return this;
+		}
+
+		@Override
+		public void accept(Runnable runnable) {
+			runnable.run();
 		}
 	}
 

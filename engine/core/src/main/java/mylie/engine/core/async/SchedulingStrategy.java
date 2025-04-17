@@ -18,5 +18,7 @@ public abstract class SchedulingStrategy {
 
 	protected interface TaskExecutor {
 		<R> void execute(Result<R> result);
+
+		Consumer<Runnable> drain();
 	}
 }

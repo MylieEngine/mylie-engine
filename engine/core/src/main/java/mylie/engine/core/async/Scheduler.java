@@ -50,9 +50,6 @@ public final class Scheduler extends Component {
 			}
 			schedulingStrategy = settings.schedulingStrategy();
 		}
-		if (schedulingStrategy == null) {
-			createDefaultStrategy();
-		}
 	}
 
 	private void createDefaultStrategy() {
@@ -62,6 +59,15 @@ public final class Scheduler extends Component {
 	public void onUpdate() {
 		for (Cache cache : caches) {
 			cache.onUpdate();
+		}
+	}
+
+	public void submit(Runnable runnable,Target target){
+		SchedulingStrategy.TaskExecutor taskExecutor = taskExecutors.get(target);
+		if(taskExecutor==null){
+			throw new IllegalArgumentException("Target< " + target.name() + " > not registered");
+		}else{
+			taskExecutor.drain().accept(runnable);
 		}
 	}
 
