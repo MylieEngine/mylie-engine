@@ -4,6 +4,8 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import mylie.engine.util.LatchUtils;
+import mylie.engine.util.QueueUtils;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class SchedulingStrategies {
@@ -152,13 +154,9 @@ public final class SchedulingStrategies {
 			running = true;
 			target().bind();
 			while (running) {
-				try {
-					Runnable poll = queue.poll(100, TimeUnit.MILLISECONDS);
-					if (poll != null) {
-						poll.run();
-					}
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
+				Runnable poll = QueueUtils.poll(queue, 16, TimeUnit.MILLISECONDS);
+				if (poll != null) {
+					poll.run();
 				}
 			}
 			target().release();
@@ -174,11 +172,7 @@ public final class SchedulingStrategies {
 				running = false;
 				latch.countDown();
 			});
-			try {
-				latch.await();
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+			LatchUtils.await(latch);
 		}
 	}
 }
