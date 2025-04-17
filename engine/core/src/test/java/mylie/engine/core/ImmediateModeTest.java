@@ -121,10 +121,10 @@ public class ImmediateModeTest {
 		ImmediateMode.removeEngineComponent(component);
 		boolean multiThreaded = ImmediateMode.getEngineComponent(Scheduler.class).multiThreaded();
 		ImmediateMode.getEngineComponent(Scheduler.class).submit(() -> {
-            if (multiThreaded) {
-                Assertions.assertEquals("Application-Thread", Thread.currentThread().getName());
-            }
-        }, Application.TARGET);
+			if (multiThreaded) {
+				Assertions.assertEquals("Application-Thread", Thread.currentThread().getName());
+			}
+		}, Application.TARGET);
 		ImmediateMode.update();
 		assertEquals(2, component.observeEnabled);
 		assertEquals(2, component.observeDisable);

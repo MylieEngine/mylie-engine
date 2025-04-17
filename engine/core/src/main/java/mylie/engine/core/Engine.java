@@ -3,16 +3,30 @@ package mylie.engine.core;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class Engine {
-	static Core core;
-	static final String NOT_RUNNING = "Engine is not running";
-	static final String ALREADY_RUNNING = "Engine is already running";
+	private static Core core;
+	private static final String NOT_RUNNING = "Engine is not running";
+	private static final String ALREADY_RUNNING = "Engine is already running";
 	private Engine() {
 		throw new IllegalInstantiationException(Engine.class);
 	}
 
 	static void initialize(EngineSettings engineSettings) {
+		if (core != null) {
+			throw new IllegalStateException(ALREADY_RUNNING);
+		}
 		core = new Core(engineSettings);
 		core.onInit();
+	}
+
+	static Core core() {
+		if (core == null) {
+			throw new IllegalStateException(NOT_RUNNING);
+		}
+		return core;
+	}
+
+	static void clear() {
+		core = null;
 	}
 
 	public static void shutdown(ShutdownReason reason) {
@@ -48,6 +62,9 @@ public final class Engine {
 	}
 
 	static void update() {
+		if (core == null) {
+			throw new IllegalStateException(NOT_RUNNING);
+		}
 		core.onUpdate();
 	}
 
