@@ -4,7 +4,8 @@ import java.util.Optional;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class Engine {
-	private static Optional<Core> core = Optional.empty();
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static Optional<Core> core = Optional.empty();
 	private static final String NOT_RUNNING = "Engine is not running";
 	private static final String ALREADY_RUNNING = "Engine is already running";
 	private Engine() {
