@@ -139,7 +139,7 @@ public final class Components {
 			};
 
 			private static final Functions.One<Base, Boolean> SHUTDOWN_COMPONENT = new Functions.One<>(
-					"UPDATE_COMPONENT") {
+					"SHUTDOWN_COMPONENT") {
 				@Override
 				protected Boolean execute(Base base) {
 					if (base.currentlyEnabled()) {
