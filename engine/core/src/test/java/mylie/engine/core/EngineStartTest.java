@@ -16,7 +16,7 @@ public class EngineStartTest {
 	 */
 
 	@Test
-	public void testNotStarted(){
+	public void testNotStarted() {
 		Assertions.assertThrows(IllegalStateException.class, Engine::shutdownReason);
 	}
 

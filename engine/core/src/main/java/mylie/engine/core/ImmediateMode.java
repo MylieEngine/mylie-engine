@@ -37,7 +37,6 @@ public class ImmediateMode extends Application {
 		core.componentManager().removeComponent(component);
 	}
 
-
 	public static ShutdownReason start(EngineSettings engineSettings) {
 		if (core != null) {
 			throw new IllegalStateException(ALREADY_RUNNING);
@@ -55,12 +54,12 @@ public class ImmediateMode extends Application {
 			if (reason instanceof ShutdownReason.Restart(EngineSettings engineSettings)) {
 				if (core.settings().handleRestarts()) {
 					destroy();
-					core=null;
+					core = null;
 					return start(engineSettings);
 				}
 			}
 			destroy();
-			core=null;
+			core = null;
 			return reason;
 		}
 		return null;

@@ -111,7 +111,7 @@ public final class SchedulingStrategies {
 		}
 	}
 
-	static class DirectExecutor implements SchedulingStrategy.TaskExecutor,Consumer<Runnable>{
+	static class DirectExecutor implements SchedulingStrategy.TaskExecutor, Consumer<Runnable> {
 		@Override
 		public <R> void execute(Result<R> result) {
 			Async.executeTask(result);

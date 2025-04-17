@@ -3,7 +3,6 @@ package mylie.engine.core;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULING_STRATEGIES_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
-import mylie.engine.TestUtils;
 import mylie.engine.core.async.Scheduler;
 import mylie.engine.core.async.SchedulingStrategy;
 import org.junit.jupiter.api.Assertions;
@@ -46,8 +45,7 @@ public class ImmediateModeTest {
 		assertThrows(IllegalStateException.class, ImmediateMode::update);
 		assertThrows(IllegalStateException.class, () -> ImmediateMode.shutdown("OK"));
 		assertThrows(IllegalStateException.class, ImmediateMode::restart);
-		assertThrows(IllegalStateException.class,
-				() -> ImmediateMode.shutdown(new RuntimeException()));
+		assertThrows(IllegalStateException.class, () -> ImmediateMode.shutdown(new RuntimeException()));
 
 	}
 
@@ -59,7 +57,7 @@ public class ImmediateModeTest {
 		assertDoesNotThrow(() -> ImmediateMode.start(engineSettings));
 		assertThrows(IllegalStateException.class, () -> ImmediateMode.start(engineSettings));
 		ImmediateMode.shutdown("OK");
-		//ImmediateMode.update();
+		// ImmediateMode.update();
 	}
 
 	@ParameterizedTest
@@ -109,38 +107,34 @@ public class ImmediateModeTest {
 		component.enabled(false);
 		ImmediateMode.update();
 		assertEquals(1, component.observeEnabled);
-		assertEquals(1,component.observeDisable);
+		assertEquals(1, component.observeDisable);
 		assertEquals(2, component.observeUpdate);
 		ImmediateMode.update();
 		assertEquals(1, component.observeEnabled);
-		assertEquals(1,component.observeDisable);
+		assertEquals(1, component.observeDisable);
 		assertEquals(2, component.observeUpdate);
 		component.enabled(true);
 		ImmediateMode.update();
 		assertEquals(2, component.observeEnabled);
-		assertEquals(1,component.observeDisable);
+		assertEquals(1, component.observeDisable);
 		assertEquals(3, component.observeUpdate);
 		ImmediateMode.removeEngineComponent(component);
-		boolean multiThreaded=ImmediateMode.getEngineComponent(Scheduler.class).multiThreaded();
-		ImmediateMode.getEngineComponent(Scheduler.class).submit(new Runnable() {
-			@Override
-			public void run() {
-				if(multiThreaded) {
-					Assertions.assertEquals("Application-Thread", Thread.currentThread().getName());
-				}
-			}
-		},Application.TARGET);
+		boolean multiThreaded = ImmediateMode.getEngineComponent(Scheduler.class).multiThreaded();
+		ImmediateMode.getEngineComponent(Scheduler.class).submit(() -> {
+            if (multiThreaded) {
+                Assertions.assertEquals("Application-Thread", Thread.currentThread().getName());
+            }
+        }, Application.TARGET);
 		ImmediateMode.update();
 		assertEquals(2, component.observeEnabled);
-		assertEquals(2,component.observeDisable);
+		assertEquals(2, component.observeDisable);
 		assertEquals(3, component.observeUpdate);
 		assertEquals(1, component.observeRemoved);
 		assertEquals(1, component.observeDestroy);
 		ImmediateMode.shutdown("OK");
 	}
 
-
-	public static class ObservableComponent extends Components.App{
+	public static class ObservableComponent extends Components.App {
 		private int observeEnabled;
 		private int observeDisable;
 		private int observeAdded;

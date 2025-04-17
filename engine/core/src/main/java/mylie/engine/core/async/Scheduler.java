@@ -62,11 +62,11 @@ public final class Scheduler extends Component {
 		}
 	}
 
-	public void submit(Runnable runnable,Target target){
+	public void submit(Runnable runnable, Target target) {
 		SchedulingStrategy.TaskExecutor taskExecutor = taskExecutors.get(target);
-		if(taskExecutor==null){
+		if (taskExecutor == null) {
 			throw new IllegalArgumentException("Target< " + target.name() + " > not registered");
-		}else{
+		} else {
 			taskExecutor.drain().accept(runnable);
 		}
 	}
