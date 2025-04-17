@@ -1,9 +1,11 @@
 package mylie.engine.core;
 
 import java.util.Optional;
+import mylie.engine.core.async.Target;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class Engine {
+	public static final Target TARGET = new Target("Engine", true, false);
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private static Optional<Core> coreInstance = Optional.empty();
 	private static final String NOT_RUNNING = "Engine is not running";
