@@ -89,9 +89,8 @@ public final class SchedulingStrategies {
 			}
 		}
 	}
-
+	@Getter
 	static class SubmitExecutor implements SchedulingStrategy.TaskExecutor {
-		@Getter
 		private final Target target;
 		private final Consumer<Runnable> drain;
 
@@ -103,11 +102,6 @@ public final class SchedulingStrategies {
 		@Override
 		public <R> void execute(Result<R> result) {
 			drain.accept(() -> Async.executeTask(result));
-		}
-
-		@Override
-		public Consumer<Runnable> drain() {
-			return drain;
 		}
 	}
 
