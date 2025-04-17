@@ -5,7 +5,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-final class AsyncTestData {
+public final class AsyncTestData {
 	private AsyncTestData() {
 	}
 	public static final String SCHEDULER_SOURCE = "mylie.engine.core.async.AsyncTestData#schedulerProvider";
@@ -17,6 +17,13 @@ final class AsyncTestData {
 				new Scheduler(
 						new SchedulingStrategies.MultiThreadExecutor(Executors.newVirtualThreadPerTaskExecutor())),
 				new Scheduler(new SchedulingStrategies.MultiThreadExecutor(Executors.newFixedThreadPool(4))));
+	}
+	public static final String SCHEDULING_STRATEGIES_SOURCE = "mylie.engine.core.async.AsyncTestData#schedulingStrategies";
+	public static Stream<SchedulingStrategy> schedulingStrategies() {
+		return Stream.of(new SchedulingStrategies.SingleThread(),
+				new SchedulingStrategies.MultiThreadExecutor(ForkJoinPool.commonPool()),
+				new SchedulingStrategies.MultiThreadExecutor(Executors.newSingleThreadExecutor()),
+				new SchedulingStrategies.MultiThreadExecutor(Executors.newVirtualThreadPerTaskExecutor()));
 	}
 
 	public static final Functions.One<AtomicInteger, Boolean> ATOMIC_INT_INCREASE = new Functions.One<>(

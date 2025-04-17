@@ -1,14 +1,22 @@
 package mylie.engine.core;
 
 import mylie.engine.TestUtils;
+import mylie.engine.core.async.SchedulingStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static mylie.engine.core.async.AsyncTestData.SCHEDULER_SOURCE;
+import static mylie.engine.core.async.AsyncTestData.SCHEDULING_STRATEGIES_SOURCE;
 
 public class ImmediateModeTest {
 
-	@Test
-	public void testLifecycle() {
+	@ParameterizedTest
+	@MethodSource(SCHEDULING_STRATEGIES_SOURCE)
+	public void testLifecycle(SchedulingStrategy schedulingStrategy) {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
+		engineSettings.schedulingStrategy(schedulingStrategy);
 		engineSettings.handleRestarts(true);
 		ShutdownReason reason;
 		reason = Engine.ImmediateMode.start(engineSettings);
@@ -22,9 +30,11 @@ public class ImmediateModeTest {
 		Assertions.assertEquals("OK", ((ShutdownReason.Normal) reason).reason());
 	}
 
-	@Test
-	public void testLifecycleWithException() {
+	@ParameterizedTest
+	@MethodSource(SCHEDULING_STRATEGIES_SOURCE)
+	public void testLifecycleWithException(SchedulingStrategy schedulingStrategy) {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
+		engineSettings.schedulingStrategy(schedulingStrategy);
 		engineSettings.handleRestarts(true);
 		ShutdownReason reason;
 		reason = Engine.ImmediateMode.start(engineSettings);
@@ -47,18 +57,22 @@ public class ImmediateModeTest {
 
 	}
 
-	@Test
-	public void testDoubleStart() {
+	@ParameterizedTest
+	@MethodSource(SCHEDULING_STRATEGIES_SOURCE)
+	public void testDoubleStart(SchedulingStrategy schedulingStrategy) {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
+		engineSettings.schedulingStrategy(schedulingStrategy);
 		Assertions.assertDoesNotThrow(() -> Engine.ImmediateMode.start(engineSettings));
 		Assertions.assertThrows(IllegalStateException.class, () -> Engine.ImmediateMode.start(engineSettings));
 		Engine.ImmediateMode.shutdown("OK");
 		Engine.ImmediateMode.update();
 	}
 
-	@Test
-	public void testHandleRestarts() {
+	@ParameterizedTest
+	@MethodSource(SCHEDULING_STRATEGIES_SOURCE)
+	public void testHandleRestarts(SchedulingStrategy schedulingStrategy) {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
+		engineSettings.schedulingStrategy(schedulingStrategy);
 		engineSettings.handleRestarts(true);
 		Assertions.assertNull(Engine.ImmediateMode.start(engineSettings));
 		Engine.ImmediateMode.restart();
@@ -67,9 +81,11 @@ public class ImmediateModeTest {
 		Assertions.assertNotNull(Engine.ImmediateMode.update());
 	}
 
-	@Test
-	public void testHandleRestartsFalse() {
+	@ParameterizedTest
+	@MethodSource(SCHEDULING_STRATEGIES_SOURCE)
+	public void testHandleRestartsFalse(SchedulingStrategy schedulingStrategy) {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
+		engineSettings.schedulingStrategy(schedulingStrategy);
 		engineSettings.handleRestarts(false);
 		Assertions.assertNull(Engine.ImmediateMode.start(engineSettings));
 		Engine.ImmediateMode.restart();
