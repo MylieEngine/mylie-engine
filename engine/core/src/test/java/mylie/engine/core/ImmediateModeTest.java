@@ -93,6 +93,7 @@ public class ImmediateModeTest {
 		engineSettings.schedulingStrategy(schedulingStrategy);
 		ImmediateMode.start(engineSettings);
 		ObservableComponent component = ImmediateMode.addEngineComponent(ObservableComponent.class);
+		BaseComponent baseComponent = ImmediateMode.addEngineComponent(BaseComponent.class);
 		assertEquals(1, component.observeAdded);
 		assertEquals(0, component.observeEnabled);
 		assertEquals(0, component.observeInitialize);
@@ -132,6 +133,20 @@ public class ImmediateModeTest {
 		assertEquals(1, component.observeRemoved);
 		assertEquals(1, component.observeDestroy);
 		ImmediateMode.shutdown("OK");
+		assertTrue(baseComponent.initialized);
+	}
+
+	public static class BaseComponent extends Components.Core {
+		boolean initialized;
+		public BaseComponent(ComponentManager manager) {
+			super(manager);
+		}
+
+		@Override
+		protected void onInitialize() {
+			super.onInitialize();
+			initialized = true;
+		}
 	}
 
 	public static class ObservableComponent extends Components.App {

@@ -24,4 +24,9 @@ public class EngineStartTest {
 	public void testInstantiation() {
 		TestUtils.testUtilityInstantiation(Engine.class);
 	}
+
+	@Test
+	public void testGetUninitializedCore() {
+		Assertions.assertThrows(IllegalStateException.class, Engine::core);
+	}
 }

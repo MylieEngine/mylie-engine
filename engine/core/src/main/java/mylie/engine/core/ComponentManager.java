@@ -42,8 +42,8 @@ public class ComponentManager {
 			return null;
 		}
 		if (running && component instanceof Components.Base base && base.currentlyEnabled()) {
-				base.onDisable();
-				base.onDestroy();
+			base.onDisable();
+			base.onDestroy();
 		}
 		component.onRemoved();
 		return component;

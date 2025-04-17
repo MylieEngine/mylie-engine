@@ -67,7 +67,17 @@ public final class Scheduler extends Component {
 		if (taskExecutor == null) {
 			throw new IllegalArgumentException("Target< " + target.name() + " > not registered");
 		} else {
-			taskExecutor.drain().accept(runnable);
+			if (taskExecutor instanceof SchedulingStrategies.SubmitExecutor submitExecutor) {
+				submitExecutor.drain().accept(runnable);
+				return;
+			} else if (taskExecutor instanceof SchedulingStrategies.DirectExecutor directExecutor) {
+				runnable.run();
+			} else {
+				taskExecutor.execute(Result.of(target, null, 0, () -> {
+					runnable.run();
+					return true;
+				}));
+			}
 		}
 	}
 
