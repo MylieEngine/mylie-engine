@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.async.*;
+import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class Components {
 	private Components() {
+		throw new IllegalInstantiationException(Components.class);
 	}
 
 	public abstract static class App extends Base {

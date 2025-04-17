@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 @Slf4j
-public class QueueUtils {
+public final class QueueUtils {
 	private QueueUtils() {
 		throw new IllegalInstantiationException(QueueUtils.class);
 	}

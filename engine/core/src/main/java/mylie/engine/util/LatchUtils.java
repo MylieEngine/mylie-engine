@@ -6,7 +6,7 @@ import mylie.engine.util.exceptions.IllegalInstantiationException;
 import java.util.concurrent.CountDownLatch;
 
 @Slf4j
-public class LatchUtils {
+public final class LatchUtils {
     private LatchUtils() {
         throw new IllegalInstantiationException(LatchUtils.class);
     }
