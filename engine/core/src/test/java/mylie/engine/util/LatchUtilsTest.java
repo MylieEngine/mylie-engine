@@ -18,7 +18,7 @@ class LatchUtilsTest {
     void testAwaitLatchReachesZero() {
         CountDownLatch latch = new CountDownLatch(1);
 
-        new Thread(() -> latch.countDown()).start();
+        new Thread(latch::countDown).start();
 
         assertDoesNotThrow(() -> LatchUtils.await(latch), "LatchUtils.await should not throw an exception");
         assertEquals(0, latch.getCount(), "Latch count should reach zero after awaiting");

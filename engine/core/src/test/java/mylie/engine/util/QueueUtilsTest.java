@@ -30,9 +30,7 @@ class QueueUtilsTest {
     void testPollReturnsNullOnInterruptedException() throws InterruptedException {
         BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
         final String[] result = new String[1];
-        Thread pollThread = new Thread(() -> {
-            result[0] = QueueUtils.poll(queue, 5000L, TimeUnit.MILLISECONDS);
-        });
+        Thread pollThread = new Thread(() -> result[0] = QueueUtils.poll(queue, 5000L, TimeUnit.MILLISECONDS));
         pollThread.start();
         Thread.sleep(100);
         pollThread.interrupt();
