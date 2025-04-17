@@ -5,7 +5,7 @@ import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public final class Engine {
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static Optional<Core> core = Optional.empty();
+	private static Optional<Core> coreInstance = Optional.empty();
 	private static final String NOT_RUNNING = "Engine is not running";
 	private static final String ALREADY_RUNNING = "Engine is already running";
 	private Engine() {
@@ -13,22 +13,22 @@ public final class Engine {
 	}
 
 	static void initialize(EngineSettings engineSettings) {
-		if (core.isPresent()) {
+		if (coreInstance.isPresent()) {
 			throw new IllegalStateException(ALREADY_RUNNING);
 		}
-		core = Optional.of(new Core(engineSettings));
-		core.get().onInit();
+		coreInstance = Optional.of(new Core(engineSettings));
+		coreInstance.get().onInit();
 	}
 
 	static Core core() {
-		if (core.isEmpty()) {
+		if (coreInstance.isEmpty()) {
 			throw new IllegalStateException(NOT_RUNNING);
 		}
-		return core.get();
+		return coreInstance.get();
 	}
 
 	static void clear() {
-		core = Optional.empty();
+		coreInstance = Optional.empty();
 	}
 
 	public static void shutdown(ShutdownReason reason) {
