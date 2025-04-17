@@ -41,11 +41,9 @@ public class ComponentManager {
 			log.warn("Component < {} > not found", component.getClass().getSimpleName());
 			return null;
 		}
-		if (running && component instanceof Components.Base base) {
-			if (base.currentlyEnabled()) {
+		if (running && component instanceof Components.Base base && base.currentlyEnabled()) {
 				base.onDisable();
 				base.onDestroy();
-			}
 		}
 		component.onRemoved();
 		return component;
