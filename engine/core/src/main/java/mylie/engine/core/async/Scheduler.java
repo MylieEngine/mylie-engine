@@ -69,8 +69,7 @@ public final class Scheduler extends Component {
 		} else {
 			if (taskExecutor instanceof SchedulingStrategies.SubmitExecutor submitExecutor) {
 				submitExecutor.drain().accept(runnable);
-				return;
-			} else if (taskExecutor instanceof SchedulingStrategies.DirectExecutor directExecutor) {
+			} else if (taskExecutor instanceof SchedulingStrategies.DirectExecutor) {
 				runnable.run();
 			} else {
 				taskExecutor.execute(Result.of(target, null, 0, () -> {

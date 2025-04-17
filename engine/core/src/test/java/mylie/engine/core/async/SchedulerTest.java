@@ -41,9 +41,7 @@ class SchedulerTest {
 		Target target = new Target("TestSubmission", true, false);
 		scheduler.register(target, queue::add);
 		AtomicInteger atomicInteger = new AtomicInteger(0);
-		scheduler.submit(() -> {
-			atomicInteger.incrementAndGet();
-		}, target);
+		scheduler.submit(atomicInteger::incrementAndGet, target);
 		if (scheduler.multiThreaded()) {
 			Assertions.assertEquals(1, queue.size());
 		} else {
