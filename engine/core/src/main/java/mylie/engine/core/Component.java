@@ -1,9 +1,12 @@
 package mylie.engine.core;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class Component {
+	@Getter(AccessLevel.PACKAGE)
 	private final ComponentManager manager;
 	protected Component(ComponentManager manager) {
 		this.manager = manager;

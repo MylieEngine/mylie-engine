@@ -1,16 +1,23 @@
 package mylie.engine.core;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import mylie.engine.core.async.Result;
 import mylie.engine.util.ClassUtils;
 
 @Slf4j
 public class ComponentManager {
 	private final List<Component> components;
-
+	@Getter(AccessLevel.PACKAGE)
+	private boolean running;
 	public ComponentManager() {
-		components = new LinkedList<>();
+		components = new CopyOnWriteArrayList<>();
 	}
 
 	public <T extends Component> T addComponent(Class<T> component) {
@@ -38,5 +45,19 @@ public class ComponentManager {
 		}
 		component.onRemoved();
 		return component;
+	}
+
+	public void updateComponents(boolean running) {
+		this.running = running;
+		List<Result<?>> results = new ArrayList<>();
+		for (Component component : components) {
+			if (component instanceof Components.Base base) {
+				results.add(base.updateTask().execute());
+			}
+		}
+		results.forEach(Result::get);
+		if(!running){
+			components.forEach(this::removeComponent);
+		}
 	}
 }

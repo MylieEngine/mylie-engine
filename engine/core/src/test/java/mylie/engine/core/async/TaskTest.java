@@ -15,20 +15,24 @@ class TaskTest {
 	public void testExecutionOrder(Scheduler scheduler) {
 		scheduler.register(Cache.ONE_FRAME);
 		List<String> list = new SaveHashList<>();
-		Task<Boolean> task1 = new TestTask(scheduler, list, "task1");
-		Task<Boolean> task2 = new TestTask(scheduler, list, "task2");
-		Task<Boolean> task3 = new TestTask(scheduler, list, "task3");
-		Task<Boolean> task4 = new TestTask(scheduler, list, "task4");
+		String taskName1 = "task1";
+		String taskName2 = "task2";
+		String taskName3 = "task3";
+		String taskName4 = "task4";
+		Task<Boolean> task1 = new TestTask(scheduler, list, taskName1);
+		Task<Boolean> task2 = new TestTask(scheduler, list, taskName2);
+		Task<Boolean> task3 = new TestTask(scheduler, list, taskName3);
+		Task<Boolean> task4 = new TestTask(scheduler, list, taskName4);
 		task1.dependencies().add(task2);
 		task1.dependencies().add(task4);
 		task2.dependencies().add(task3);
 		task3.dependencies().add(task4);
 		task1.execute().get();
 		Assertions.assertEquals(4, list.size());
-		Assertions.assertTrue(list.indexOf("task2") < list.indexOf("task1"));
-		Assertions.assertTrue(list.indexOf("task4") < list.indexOf("task3"));
-		Assertions.assertTrue(list.indexOf("task4") < list.indexOf("task2"));
-		Assertions.assertTrue(list.indexOf("task4") < list.indexOf("task1"));
+		Assertions.assertTrue(list.indexOf(taskName2) < list.indexOf(taskName1));
+		Assertions.assertTrue(list.indexOf(taskName4) < list.indexOf(taskName3));
+		Assertions.assertTrue(list.indexOf(taskName4) < list.indexOf(taskName2));
+		Assertions.assertTrue(list.indexOf(taskName4) < list.indexOf(taskName1));
 		scheduler.unregister(Cache.ONE_FRAME);
 	}
 

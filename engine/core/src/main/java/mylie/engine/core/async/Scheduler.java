@@ -30,6 +30,12 @@ public final class Scheduler extends Component {
 		taskExecutors.put(Target.BACKGROUND, schedulingStrategy.executor(Target.BACKGROUND, null));
 	}
 
+	public WorkerThread createWorkerThread(Target target) {
+		WorkerThread workerThread = schedulingStrategy.createWorkerThread(target);
+		register(target, workerThread.drain());
+		return workerThread;
+	}
+
 	private void loadSettings() {
 		if (schedulingStrategy == null) {
 			Vault vault = component(Vault.class);
@@ -96,6 +102,9 @@ public final class Scheduler extends Component {
 		if (!taskExecutors.containsKey(target)) {
 			log.warn("Target< {} > not registered", target.name());
 			throw new IllegalArgumentException("Target< " + target.name() + " > not registered");
+		}
+		if (log.isTraceEnabled()) {
+			log.trace("Target< {} > unregistered", target.name());
 		}
 		taskExecutors.remove(target);
 	}

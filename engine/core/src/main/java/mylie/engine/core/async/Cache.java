@@ -8,7 +8,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class Cache {
 	public static final Cache NO = new NoOpCache();
 	public static final Cache ONE_FRAME = new OneFrameCache(new ConcurrentHashMap<>());
-	abstract <R> Result<R> result(Hash hash, long version);
+
+	public static void registerDefaults(Scheduler scheduler) {
+		scheduler.register(NO);
+		scheduler.register(ONE_FRAME);
+	}
+
+    abstract <R> Result<R> result(Hash hash, long version);
 
 	abstract <R> void result(Hash hash, Result<R> result);
 
@@ -18,7 +24,7 @@ public abstract class Cache {
 
 	abstract Lock getLock(Hash hash);
 
-	private static abstract class MapCache extends Cache {
+	private abstract static class MapCache extends Cache {
 		final java.util.Map<Hash, Result<?>> results;
 		public MapCache(Map<Hash, Result<?>> results) {
 			this.results = results;

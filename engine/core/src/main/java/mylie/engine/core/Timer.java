@@ -13,7 +13,7 @@ public class Timer extends Component {
 	private Time currentTime;
 	private long lastUpdate;
 	@Getter
-	final private Settings settings;
+	private final Settings settings;
 
 	public Timer(ComponentManager manager) {
 		super(manager);
