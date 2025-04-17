@@ -3,7 +3,16 @@ package mylie.engine.core;
 import static mylie.engine.core.Engine.*;
 import static mylie.engine.core.Engine.core;
 
+import java.util.concurrent.*;
+import mylie.engine.core.async.Scheduler;
+import mylie.engine.util.LatchUtils;
+import mylie.engine.util.QueueUtils;
+
 public class ImmediateMode extends Application {
+	private static boolean initialized = false;
+	private static Thread updateLoopThread;
+	private static final BlockingQueue<Runnable> updateQueue = new LinkedBlockingQueue<>();
+	private static final BlockingQueue<Runnable> mainThreadQueue = new LinkedBlockingQueue<>();
 	public ImmediateMode(ComponentManager manager) {
 		super(manager);
 	}
@@ -43,10 +52,12 @@ public class ImmediateMode extends Application {
 	}
 
 	public static ShutdownReason update() {
-		Engine.update();
-		if (core().shutdownReason() != null) {
-			ShutdownReason reason = core().shutdownReason();
-			if (reason instanceof ShutdownReason.Restart(EngineSettings engineSettings)) {
+		Scheduler scheduler = core().componentManager().component(Scheduler.class);
+		ShutdownReason shutdownReason = scheduler.multiThreaded()
+				? updateMultiThreaded(scheduler)
+				: updateSingleThreaded(scheduler);
+		if (shutdownReason != null) {
+			if (shutdownReason instanceof ShutdownReason.Restart(EngineSettings engineSettings)) {
 				if (core().settings().handleRestarts()) {
 					destroy();
 					clear();
@@ -55,9 +66,62 @@ public class ImmediateMode extends Application {
 			}
 			destroy();
 			clear();
-			return reason;
+			return shutdownReason;
 		}
 		return null;
+	}
+
+	public static ShutdownReason updateMultiThreaded(Scheduler scheduler) {
+		if (!initialized) {
+			initialized = true;
+			scheduler.register(Engine.TARGET, mainThreadQueue::add);
+			updateLoopThread = new Thread(() -> {
+				while (!Thread.interrupted()) {
+					Runnable poll = QueueUtils.poll(updateQueue, 16, TimeUnit.MILLISECONDS);
+					if (poll != null) {
+						poll.run();
+					}
+				}
+			}, "UpdateLoop");
+			updateLoopThread.start();
+		}
+		CountDownLatch latch = new CountDownLatch(1);
+		updateQueue.add(() -> {
+			Engine.update();
+			latch.countDown();
+		});
+		while (latch.getCount() > 0) {
+			Runnable poll = QueueUtils.poll(mainThreadQueue, 16, TimeUnit.MILLISECONDS);
+			if (poll != null) {
+				poll.run();
+			}
+		}
+		ShutdownReason shutdownReason = Engine.shutdownReason();
+		if (shutdownReason != null) {
+			CountDownLatch latch1 = new CountDownLatch(1);
+			updateQueue.add(() -> {
+				updateLoopThread.interrupt();
+				latch1.countDown();
+			});
+			LatchUtils.await(latch1);
+			scheduler.unregister(Engine.TARGET);
+			initialized = false;
+		}
+		return shutdownReason;
+	}
+
+	public static ShutdownReason updateSingleThreaded(Scheduler scheduler) {
+		if (!initialized) {
+			initialized = true;
+			scheduler.register(Engine.TARGET, mainThreadQueue::add);
+		}
+		Engine.update();
+		ShutdownReason shutdownReason = shutdownReason();
+		if (shutdownReason != null) {
+			scheduler.unregister(Engine.TARGET);
+			initialized = false;
+		}
+		return shutdownReason;
 	}
 
 	public static void shutdown(String reason) {
