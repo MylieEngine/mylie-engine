@@ -19,7 +19,7 @@ class LatchUtilsTest {
 
 		new Thread(latch::countDown).start();
 
-		assertDoesNotThrow(() -> LatchUtils.await(latch), "LatchUtils.await should not throw an exception");
+		assertDoesNotThrow(() -> CheckedExceptions.await(latch), "LatchUtils.await should not throw an exception");
 		assertEquals(0, latch.getCount(), "Latch count should reach zero after awaiting");
 	}
 
@@ -28,7 +28,7 @@ class LatchUtilsTest {
 		CountDownLatch latch = new CountDownLatch(1);
 		final boolean[] threadCompleted = new boolean[1];
 		Thread awaitingThread = new Thread(() -> {
-			LatchUtils.await(latch);
+			CheckedExceptions.await(latch);
 			threadCompleted[0] = true;
 		});
 		awaitingThread.start();
@@ -47,13 +47,13 @@ class LatchUtilsTest {
 	void testAwaitOnAlreadyZeroedLatch() {
 		CountDownLatch latch = new CountDownLatch(0);
 
-		assertDoesNotThrow(() -> LatchUtils.await(latch),
+		assertDoesNotThrow(() -> CheckedExceptions.await(latch),
 				"LatchUtils.await should not throw an exception for a latch with count zero");
 		assertEquals(0, latch.getCount(), "Latch count should remain zero after awaiting on a zeroed latch");
 	}
 
 	@Test
 	void testInstantiation() {
-		TestUtils.testUtilityInstantiation(LatchUtils.class);
+		TestUtils.testUtilityInstantiation(CheckedExceptions.class);
 	}
 }

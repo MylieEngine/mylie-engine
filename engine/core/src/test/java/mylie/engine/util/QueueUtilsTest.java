@@ -14,14 +14,14 @@ class QueueUtilsTest {
 	void testPollReturnsElementWhenAvailable() {
 		BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
 		queue.add("TestElement");
-		String result = QueueUtils.poll(queue, 1000L, TimeUnit.MILLISECONDS);
+		String result = CheckedExceptions.poll(queue, 1000L, TimeUnit.MILLISECONDS);
 		assertEquals("TestElement", result);
 	}
 
 	@Test
 	void testPollReturnsNullWhenQueueIsEmpty() {
 		BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
-		String result = QueueUtils.poll(queue, 1000L, TimeUnit.MILLISECONDS);
+		String result = CheckedExceptions.poll(queue, 1000L, TimeUnit.MILLISECONDS);
 		assertNull(result);
 	}
 
@@ -29,7 +29,7 @@ class QueueUtilsTest {
 	void testPollReturnsNullOnInterruptedException() throws InterruptedException {
 		BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
 		final String[] result = new String[1];
-		Thread pollThread = new Thread(() -> result[0] = QueueUtils.poll(queue, 5000L, TimeUnit.MILLISECONDS));
+		Thread pollThread = new Thread(() -> result[0] = CheckedExceptions.poll(queue, 5000L, TimeUnit.MILLISECONDS));
 		pollThread.start();
 		Thread.sleep(100);
 		pollThread.interrupt();
@@ -40,11 +40,11 @@ class QueueUtilsTest {
 
 	@Test
 	void testPollHandlesNullQueueGracefully() {
-		assertThrows(NullPointerException.class, () -> QueueUtils.poll(null, 1000L, TimeUnit.MILLISECONDS));
+		assertThrows(NullPointerException.class, () -> CheckedExceptions.poll(null, 1000L, TimeUnit.MILLISECONDS));
 	}
 
 	@Test
 	void testInstantiation() {
-		TestUtils.testUtilityInstantiation(QueueUtils.class);
+		TestUtils.testUtilityInstantiation(CheckedExceptions.class);
 	}
 }

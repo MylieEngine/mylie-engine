@@ -4,7 +4,7 @@ import static mylie.engine.core.Engine.core;
 
 import java.util.concurrent.TimeUnit;
 import mylie.engine.core.async.Scheduler;
-import mylie.engine.util.QueueUtils;
+import mylie.engine.util.CheckedExceptions;
 import mylie.engine.util.exceptions.IllegalInstantiationException;
 
 public class ManagedMode {
@@ -36,7 +36,7 @@ public class ManagedMode {
 		Thread updateLoop = new Thread(ManagedMode::updateLoopThread, "UpdateLoop");
 		updateLoop.start();
 		while (Engine.shutdownReason() == null || updateLoop.isAlive()) {
-			Runnable command = QueueUtils.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
+			Runnable command = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (command != null) {
 				command.run();
 			}

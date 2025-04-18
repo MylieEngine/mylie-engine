@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import mylie.engine.core.ComponentManager;
-import mylie.engine.util.LatchUtils;
+import mylie.engine.util.CheckedExceptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,7 +54,7 @@ class SchedulerTest {
 			atomicInteger2.incrementAndGet();
 			countDownLatch.countDown();
 		}, Target.BACKGROUND);
-		LatchUtils.await(countDownLatch);
+		CheckedExceptions.await(countDownLatch);
 		Assertions.assertEquals(1, atomicInteger2.get());
 		scheduler.unregister(target);
 

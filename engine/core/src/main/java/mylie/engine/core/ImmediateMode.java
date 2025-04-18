@@ -5,8 +5,7 @@ import static mylie.engine.core.Engine.core;
 
 import java.util.concurrent.*;
 import mylie.engine.core.async.Scheduler;
-import mylie.engine.util.LatchUtils;
-import mylie.engine.util.QueueUtils;
+import mylie.engine.util.CheckedExceptions;
 
 public class ImmediateMode extends Application {
 	private static boolean initialized = false;
@@ -74,7 +73,7 @@ public class ImmediateMode extends Application {
 			initialized = true;
 			updateLoopThread = new Thread(() -> {
 				while (!Thread.interrupted()) {
-					Runnable poll = QueueUtils.poll(updateQueue, 16, TimeUnit.MILLISECONDS);
+					Runnable poll = CheckedExceptions.poll(updateQueue, 16, TimeUnit.MILLISECONDS);
 					if (poll != null) {
 						poll.run();
 					}
@@ -88,7 +87,7 @@ public class ImmediateMode extends Application {
 			latch.countDown();
 		});
 		while (latch.getCount() > 0) {
-			Runnable poll = QueueUtils.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
+			Runnable poll = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (poll != null) {
 				poll.run();
 			}
@@ -100,7 +99,7 @@ public class ImmediateMode extends Application {
 				updateLoopThread.interrupt();
 				latch1.countDown();
 			});
-			LatchUtils.await(latch1);
+			CheckedExceptions.await(latch1);
 			initialized = false;
 		}
 		return shutdownReason;
