@@ -53,9 +53,7 @@ public class ImmediateMode extends Application {
 
 	public static ShutdownReason update() {
 		Scheduler scheduler = core().componentManager().component(Scheduler.class);
-		ShutdownReason shutdownReason = scheduler.multiThreaded()
-				? updateMultiThreaded()
-				: updateSingleThreaded();
+		ShutdownReason shutdownReason = scheduler.multiThreaded() ? updateMultiThreaded() : updateSingleThreaded();
 		if (shutdownReason != null) {
 			if (shutdownReason instanceof ShutdownReason.Restart(EngineSettings engineSettings)) {
 				if (core().settings().handleRestarts()) {
