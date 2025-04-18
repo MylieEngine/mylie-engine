@@ -1,11 +1,14 @@
 package mylie.engine.core;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.async.Cache;
 import mylie.engine.core.async.Scheduler;
+
 @Slf4j
 final class Core {
 	@Getter
@@ -15,7 +18,8 @@ final class Core {
 	@Getter(AccessLevel.PACKAGE)
 	@Setter(AccessLevel.PACKAGE)
 	private ShutdownReason shutdownReason;
-
+	@Getter(AccessLevel.PACKAGE)
+	private final BlockingQueue<Runnable> mainThreadQueue = new LinkedBlockingQueue<>();
 	Core(EngineSettings settings) {
 		this.settings = settings;
 		componentManager = new ComponentManager();
@@ -24,6 +28,7 @@ final class Core {
 		componentManager.addComponent(Scheduler.class);
 		componentManager.addComponent(Timer.class);
 		Cache.registerDefaults(componentManager.component(Scheduler.class));
+		componentManager().component(Scheduler.class).register(Engine.TARGET, mainThreadQueue::add);
 	}
 
 	void onInit() {
@@ -47,8 +52,9 @@ final class Core {
 			log.trace("Shutting down...");
 		}
 		componentManager.component(Timer.class).onUpdate();
-		componentManager.component(Scheduler.class).onUpdate();
+		Scheduler scheduler = componentManager.component(Scheduler.class);
 		componentManager.updateComponents(false);
+		scheduler.unregister(Engine.TARGET);
 	}
 
 }

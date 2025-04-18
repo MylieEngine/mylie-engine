@@ -12,7 +12,7 @@ public class ImmediateMode extends Application {
 	private static boolean initialized = false;
 	private static Thread updateLoopThread;
 	private static final BlockingQueue<Runnable> updateQueue = new LinkedBlockingQueue<>();
-	private static final BlockingQueue<Runnable> mainThreadQueue = new LinkedBlockingQueue<>();
+
 	public ImmediateMode(ComponentManager manager) {
 		super(manager);
 	}
@@ -74,7 +74,6 @@ public class ImmediateMode extends Application {
 	public static ShutdownReason updateMultiThreaded(Scheduler scheduler) {
 		if (!initialized) {
 			initialized = true;
-			scheduler.register(Engine.TARGET, mainThreadQueue::add);
 			updateLoopThread = new Thread(() -> {
 				while (!Thread.interrupted()) {
 					Runnable poll = QueueUtils.poll(updateQueue, 16, TimeUnit.MILLISECONDS);
@@ -91,7 +90,7 @@ public class ImmediateMode extends Application {
 			latch.countDown();
 		});
 		while (latch.getCount() > 0) {
-			Runnable poll = QueueUtils.poll(mainThreadQueue, 16, TimeUnit.MILLISECONDS);
+			Runnable poll = QueueUtils.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (poll != null) {
 				poll.run();
 			}
@@ -104,7 +103,6 @@ public class ImmediateMode extends Application {
 				latch1.countDown();
 			});
 			LatchUtils.await(latch1);
-			scheduler.unregister(Engine.TARGET);
 			initialized = false;
 		}
 		return shutdownReason;
@@ -113,12 +111,10 @@ public class ImmediateMode extends Application {
 	public static ShutdownReason updateSingleThreaded(Scheduler scheduler) {
 		if (!initialized) {
 			initialized = true;
-			scheduler.register(Engine.TARGET, mainThreadQueue::add);
 		}
 		Engine.update();
 		ShutdownReason shutdownReason = shutdownReason();
 		if (shutdownReason != null) {
-			scheduler.unregister(Engine.TARGET);
 			initialized = false;
 		}
 		return shutdownReason;
