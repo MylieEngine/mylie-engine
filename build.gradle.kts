@@ -66,6 +66,7 @@ subprojects {
                 java {
                     removeUnusedImports()
                     importOrder()
+                    cleanthat()
                     eclipse().configFile(rootProject.file("JavaFormatRules.xml"))
                     formatAnnotations()
                     trimTrailingWhitespace()

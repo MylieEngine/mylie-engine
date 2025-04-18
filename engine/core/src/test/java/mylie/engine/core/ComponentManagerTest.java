@@ -1,5 +1,6 @@
 package mylie.engine.core;
 
+import mylie.engine.TestUtils;
 import mylie.engine.util.exceptions.ConstructorNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +70,11 @@ public class ComponentManagerTest {
 		Assertions.assertThrows(ConstructorNotFoundException.class, () -> manager.addComponent(IllegalComponent.class));
 	}
 
+	@Test
+	void testUtilityInstantiation() {
+		TestUtils.testUtilityInstantiation(Components.class);
+	}
+
 	public static class ComponentA extends Component {
 		public ComponentA(ComponentManager manager) {
 			super(manager);
@@ -113,6 +119,7 @@ public class ComponentManagerTest {
 			this.name = name;
 		}
 
+		@SuppressWarnings("unused")
 		public String name() {
 			return name;
 		}

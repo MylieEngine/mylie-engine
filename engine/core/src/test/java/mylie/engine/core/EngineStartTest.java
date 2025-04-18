@@ -1,6 +1,7 @@
 package mylie.engine.core;
 
 import mylie.engine.TestUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class EngineStartTest {
@@ -15,7 +16,17 @@ public class EngineStartTest {
 	 */
 
 	@Test
+	public void testNotStarted() {
+		Assertions.assertThrows(IllegalStateException.class, Engine::shutdownReason);
+	}
+
+	@Test
 	public void testInstantiation() {
 		TestUtils.testUtilityInstantiation(Engine.class);
+	}
+
+	@Test
+	public void testGetUninitializedCore() {
+		Assertions.assertThrows(IllegalStateException.class, Engine::core);
 	}
 }
