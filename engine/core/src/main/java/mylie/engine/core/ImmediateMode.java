@@ -10,7 +10,6 @@ import mylie.engine.util.CheckedExceptions;
 public class ImmediateMode extends Application {
 	private static boolean initialized = false;
 	private static UpdateThread updateLoopThread;
-	private static final BlockingQueue<Runnable> updateQueue = new LinkedBlockingQueue<>();
 
 	public ImmediateMode(ComponentManager manager) {
 		super(manager);
