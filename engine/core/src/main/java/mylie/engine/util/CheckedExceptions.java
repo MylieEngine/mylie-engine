@@ -31,6 +31,7 @@ public final class CheckedExceptions {
 
 	public static void await(CyclicBarrier barrier) {
 		try {
+			System.out.println(barrier.getNumberWaiting());
 			barrier.await();
 		} catch (BrokenBarrierException | InterruptedException e) {
 			log.error("Interrupted while waiting for barrier", e);

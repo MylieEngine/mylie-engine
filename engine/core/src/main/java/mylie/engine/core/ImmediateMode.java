@@ -9,7 +9,7 @@ import mylie.engine.util.CheckedExceptions;
 
 public class ImmediateMode extends Application {
 	private static boolean initialized = false;
-	private static Thread updateLoopThread;
+	private static UpdateThread updateLoopThread;
 	private static final BlockingQueue<Runnable> updateQueue = new LinkedBlockingQueue<>();
 
 	public ImmediateMode(ComponentManager manager) {
@@ -71,22 +71,10 @@ public class ImmediateMode extends Application {
 	public static ShutdownReason updateMultiThreaded() {
 		if (!initialized) {
 			initialized = true;
-			updateLoopThread = new Thread(() -> {
-				while (!Thread.interrupted()) {
-					Runnable poll = CheckedExceptions.poll(updateQueue, 16, TimeUnit.MILLISECONDS);
-					if (poll != null) {
-						poll.run();
-					}
-				}
-			}, "UpdateLoop");
-			updateLoopThread.start();
+			updateLoopThread = new UpdateThread();
 		}
-		CountDownLatch latch = new CountDownLatch(1);
-		updateQueue.add(() -> {
-			Engine.update();
-			latch.countDown();
-		});
-		while (latch.getCount() > 0) {
+		CheckedExceptions.await(updateLoopThread.entryBarrier);
+		while (updateLoopThread.exitBarrier.getNumberWaiting() == 0) {
 			Runnable poll = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (poll != null) {
 				poll.run();
@@ -94,13 +82,12 @@ public class ImmediateMode extends Application {
 		}
 		ShutdownReason shutdownReason = Engine.shutdownReason();
 		if (shutdownReason != null) {
-			CountDownLatch latch1 = new CountDownLatch(1);
-			updateQueue.add(() -> {
-				updateLoopThread.interrupt();
-				latch1.countDown();
-			});
-			CheckedExceptions.await(latch1);
+			updateLoopThread.running = false;
+			CheckedExceptions.await(updateLoopThread.exitBarrier);
+			CheckedExceptions.await(updateLoopThread.latch);
 			initialized = false;
+		} else {
+			CheckedExceptions.await(updateLoopThread.exitBarrier);
 		}
 		return shutdownReason;
 	}
@@ -130,4 +117,30 @@ public class ImmediateMode extends Application {
 	public static void restart() {
 		Engine.restart();
 	}
+
+	private static class UpdateThread implements Runnable {
+		private final CyclicBarrier entryBarrier;
+		private final CyclicBarrier exitBarrier;
+		private final CountDownLatch latch;
+
+		public UpdateThread() {
+			this.entryBarrier = new CyclicBarrier(2);
+			this.exitBarrier = new CyclicBarrier(2);
+			this.latch = new CountDownLatch(1);
+			Thread thread = new Thread(this, "UpdateLoop");
+			thread.start();
+		}
+		private boolean running;
+		@Override
+		public void run() {
+			running = true;
+			while (running) {
+				CheckedExceptions.await(entryBarrier);
+				Engine.update();
+				CheckedExceptions.await(exitBarrier);
+			}
+			latch.countDown();
+		}
+	}
+
 }
