@@ -8,10 +8,6 @@ import org.junit.jupiter.api.Test;
 
 class LatchUtilsTest {
 
-	/**
-	 * Tests the {@link LatchUtils#await(CountDownLatch)} method which is used to wait for a CountDownLatch
-	 * to reach zero without propagating InterruptedException in case of an interruption.
-	 */
 
 	@Test
 	void testAwaitLatchReachesZero() {
