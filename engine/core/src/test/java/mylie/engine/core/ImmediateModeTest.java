@@ -3,6 +3,7 @@ package mylie.engine.core;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULING_STRATEGIES_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Objects;
 import mylie.engine.core.async.Scheduler;
 import mylie.engine.core.async.SchedulingStrategy;
 import org.junit.jupiter.api.Assertions;
@@ -134,6 +135,7 @@ public class ImmediateModeTest {
 		assertEquals(1, component.observeDestroy);
 		ImmediateMode.shutdown("OK");
 		assertTrue(coreTestComponent.initialized);
+		assertEquals(component.observeUpdate, component.observeCount);
 	}
 
 	public static class CoreTestComponent extends Components.Core {
@@ -157,6 +159,7 @@ public class ImmediateModeTest {
 		private int observeUpdate;
 		private int observeInitialize;
 		private int observeDestroy;
+		private int observeCount;
 		public ObservableComponent(ComponentManager manager) {
 			super(manager);
 		}
@@ -183,6 +186,9 @@ public class ImmediateModeTest {
 		protected void onUpdate() {
 			super.onUpdate();
 			observeUpdate++;
+			Objects.requireNonNull(component(Scheduler.class)).submit(() -> {
+				observeCount++;
+			}, Engine.TARGET);
 		}
 
 		@Override

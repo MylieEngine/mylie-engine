@@ -36,7 +36,7 @@ public final class Async {
 
 	private static <R> Result<R> execute(Scheduler scheduler, ExecutionMode mode, Target target, Cache cache,
 			long version, Hash hash, Supplier<R> supplier) {
-		Result<R> result;
+		Result<R> result = null;
 		Lock lock = cache.getLock(hash);
 		if (lock != null) {
 			lock.lock();
