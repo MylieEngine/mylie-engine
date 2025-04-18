@@ -30,16 +30,19 @@ public class ManagedModeTest {
 	}
 
 	public static class Run10 extends Application {
-		static int count = 0;
-		static boolean restart = false;
+		private static int count;
+		private static boolean restart;
+		private static final int INITIAL_COUNT = 0;
+		private static final int RESTART_COUNT = 10;
+		private static final int SHUTDOWN_COUNT = 20;
 		public Run10(ComponentManager manager) {
 			super(manager);
 		}
 
 		@Override
 		protected void onInitialize() {
-			Assertions.assertTrue(count == 10 || count == 0);
-			if (count == 10) {
+			Assertions.assertTrue(count == RESTART_COUNT || count == INITIAL_COUNT);
+			if (count == RESTART_COUNT) {
 				restart = true;
 			}
 		}
@@ -47,18 +50,18 @@ public class ManagedModeTest {
 		@Override
 		protected void onUpdate(Time time) {
 			count++;
-			Assertions.assertTrue(count <= 20);
-			if (count == 10) {
+			Assertions.assertTrue(count <= SHUTDOWN_COUNT);
+			if (count == RESTART_COUNT) {
 				Engine.restart();
 			}
-			if (count == 20) {
+			if (count == SHUTDOWN_COUNT) {
 				Engine.shutdown("OK");
 			}
 		}
 
 		@Override
 		protected void onShutdown(ShutdownReason reason) {
-			Assertions.assertTrue(count == 10 || count == 20);
+			Assertions.assertTrue(count == RESTART_COUNT || count == SHUTDOWN_COUNT);
 		}
 	}
 }
