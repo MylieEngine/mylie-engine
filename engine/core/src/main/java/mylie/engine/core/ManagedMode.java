@@ -18,7 +18,7 @@ public class ManagedMode {
 		Scheduler scheduler = core().componentManager().component(Scheduler.class);
 		ShutdownReason shutdownReason = null;
 		while (shutdownReason == null) {
-			shutdownReason = scheduler.multiThreaded() ? runMultiThreaded(scheduler) : runSingleThreaded(scheduler);
+			shutdownReason = scheduler.multiThreaded() ? runMultiThreaded() : runSingleThreaded();
 			if (shutdownReason instanceof ShutdownReason.Restart(EngineSettings settings)) {
 				if (engineSettings.handleRestarts()) {
 					Engine.clear();
@@ -32,7 +32,7 @@ public class ManagedMode {
 		return shutdownReason;
 	}
 
-	private static ShutdownReason runMultiThreaded(Scheduler scheduler) {
+	private static ShutdownReason runMultiThreaded() {
 		Thread updateLoop = new Thread(ManagedMode::updateLoopThread, "UpdateLoop");
 		updateLoop.start();
 		while (Engine.shutdownReason() == null || updateLoop.isAlive()) {
@@ -51,7 +51,7 @@ public class ManagedMode {
 		Engine.destroy();
 	}
 
-	private static ShutdownReason runSingleThreaded(Scheduler scheduler) {
+	private static ShutdownReason runSingleThreaded() {
 		ShutdownReason shutdownReason = null;
 		while (shutdownReason == null) {
 			Engine.update();
