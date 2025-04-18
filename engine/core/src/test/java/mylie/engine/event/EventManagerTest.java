@@ -22,7 +22,7 @@ class EventManagerTest {
 		eventManager.registerListener(listener);
 		eventManager.fireEvent(event);
 		assertEquals(1, listener.receivedEvents.size());
-		assertEquals(event, listener.receivedEvents.get(0));
+		assertEquals(event, listener.receivedEvents.getFirst());
 	}
 
 	@Test
@@ -36,9 +36,9 @@ class EventManagerTest {
 		eventManager.registerListener(listener2);
 		eventManager.fireEvent(event);
 		assertEquals(1, listener1.receivedEvents.size());
-		assertEquals(event, listener1.receivedEvents.get(0));
+		assertEquals(event, listener1.receivedEvents.getFirst());
 		assertEquals(1, listener2.receivedEvents.size());
-		assertEquals(event, listener2.receivedEvents.get(0));
+		assertEquals(event, listener2.receivedEvents.getFirst());
 	}
 
 	@Test

@@ -25,7 +25,7 @@ public class ManagedModeTest {
 		ShutdownReason.Normal normal = Assertions.assertInstanceOf(ShutdownReason.Normal.class, shutdownReason);
 		Assertions.assertEquals("OK", normal.reason());
 		Assertions.assertTrue(Run10.restart);
-		Assertions.assertEquals(Run10.count2, Run10.SHUTDOWN_COUNT);
+		Assertions.assertEquals(Run10.SHUTDOWN_COUNT, Run10.count2);
 	}
 
 	@Test
@@ -62,9 +62,7 @@ public class ManagedModeTest {
 			if (count == SHUTDOWN_COUNT) {
 				Engine.shutdown("OK");
 			}
-			Objects.requireNonNull(component(Scheduler.class)).submit(() -> {
-				count2++;
-			}, Engine.TARGET);
+			Objects.requireNonNull(component(Scheduler.class)).submit(() -> count2++, Engine.TARGET);
 		}
 
 		@Override

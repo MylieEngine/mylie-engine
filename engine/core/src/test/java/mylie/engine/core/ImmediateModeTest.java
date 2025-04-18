@@ -186,9 +186,7 @@ public class ImmediateModeTest {
 		protected void onUpdate() {
 			super.onUpdate();
 			observeUpdate++;
-			Objects.requireNonNull(component(Scheduler.class)).submit(() -> {
-				observeCount++;
-			}, Engine.TARGET);
+			Objects.requireNonNull(component(Scheduler.class)).submit(() -> observeCount++, Engine.TARGET);
 		}
 
 		@Override
