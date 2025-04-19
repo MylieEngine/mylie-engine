@@ -1,7 +1,9 @@
 package mylie.engine.core.async;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,6 +33,10 @@ public final class Result<T> {
 			execute();
 		}
 		return future().join();
+	}
+
+	public CompletionStage<Void> thenAccept(Consumer<T> consumer) {
+		return future.thenAccept(consumer);
 	}
 
 	static <T> Result<T> of(Target target, Hash hash, long version, Supplier<T> supplier) {
