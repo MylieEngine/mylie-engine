@@ -27,7 +27,7 @@ public class InputDevice<D extends InputDevice<D>> {
 	}
 
 	@Getter(AccessLevel.PACKAGE)
-	private final Map<Input<?, ?>, Versioned<?>> states;
+	private final Map<Input<? super D, ?>, Versioned<?>> states;
 	@Getter(AccessLevel.PUBLIC)
 	private final Class<D> type;
 	@Getter(AccessLevel.PUBLIC)

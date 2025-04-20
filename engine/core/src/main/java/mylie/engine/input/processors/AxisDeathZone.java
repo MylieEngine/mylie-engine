@@ -8,23 +8,23 @@ import mylie.engine.input.InputProcessor;
 import mylie.engine.input.devices.Gamepad;
 
 public final class AxisDeathZone implements InputProcessor {
-    float threshold;
+	float threshold;
 
-    public AxisDeathZone(float threshold) {
-        this.threshold = threshold;
-    }
+	public AxisDeathZone(float threshold) {
+		this.threshold = threshold;
+	}
 
-    @Override
-	public <D extends InputDevice<D>, I extends Input<D, V>, V> InputEvent<?, ?, ?> process(InputEvent<?, ?, ?> event,
-			Consumer<InputEvent<?, ?, ?>> additionalEvents) {
-        if(event.device().isVirtual()){
-            if(event.inputId() instanceof Gamepad.Axis axis){
-                InputEvent<Gamepad, Gamepad.Axis, Float> eventCast = (InputEvent<Gamepad, Gamepad.Axis, Float>) event;
-                if(eventCast.value() < threshold && eventCast.value() > -threshold){
-                    return eventCast.with(eventCast.device(), null, 0.0f);
-                }
-            }
-        }
-        return event;
+	@Override
+	public <D extends InputDevice<D>, I extends Input<D, V>, V> InputEvent<D, I, V> process(InputEvent<D, I, V> event,
+			Consumer<InputEvent<D, I, V>> additionalEvents) {
+		if (event.device().isVirtual()) {
+			if (event.inputId() instanceof Gamepad.Axis axis && event.value() instanceof Float value) {
+				InputEvent<Gamepad, Gamepad.Axis, Float> axisEvent = (InputEvent<Gamepad, Gamepad.Axis, Float>) event;
+				if (value < threshold && value > -threshold) {
+					return (InputEvent<D, I, V>) axisEvent.with(null, null, 0.0f);
+				}
+			}
+		}
+		return event;
 	}
 }

@@ -13,7 +13,6 @@ import mylie.engine.input.devices.Gamepad;
 import mylie.engine.input.devices.Keyboard;
 import mylie.engine.input.devices.Mouse;
 import mylie.engine.input.processors.AxisDeathZone;
-import mylie.engine.math.Vec2f;
 import mylie.engine.util.Versioned;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,32 +123,32 @@ public class InputManagerTest {
 		Assertions.assertEquals(0, inputListener.events.size());
 	}
 
-    @Test
-    void testAxisDeathZone(){
-        float defaultValue=1;
-        float testValue=0.05f;
-        inputManager.mapDevice(Gamepad.class,0,inputProvider.gamepad);
-        inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,defaultValue);
-        inputManager.onUpdate();
-        Assertions.assertEquals(defaultValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
-        inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,testValue);
-        inputManager.onUpdate();
-        Assertions.assertEquals(testValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
-        AxisDeathZone axisDeathZone = new AxisDeathZone(0.1f);
-        inputManager.registerInputProcessor(axisDeathZone);
-        inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,defaultValue);
-        inputManager.onUpdate();
-        Assertions.assertEquals(defaultValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
-        inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,testValue);
-        inputManager.onUpdate();
-        Assertions.assertEquals(0,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
-		inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,defaultValue);
+	@Test
+	void testAxisDeathZone() {
+		float defaultValue = 1;
+		float testValue = 0.05f;
+		inputManager.mapDevice(Gamepad.class, 0, inputProvider.gamepad);
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
 		inputManager.onUpdate();
-		Assertions.assertEquals(defaultValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
+		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
+		inputManager.onUpdate();
+		Assertions.assertEquals(testValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
+		AxisDeathZone axisDeathZone = new AxisDeathZone(0.1f);
+		inputManager.registerInputProcessor(axisDeathZone);
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
+		inputManager.onUpdate();
+		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
+		inputManager.onUpdate();
+		Assertions.assertEquals(0, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
+		inputManager.onUpdate();
+		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
 		inputManager.unregisterInputProcessor(axisDeathZone);
-		inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,testValue);
+		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
 		inputManager.onUpdate();
-		Assertions.assertEquals(testValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
+		Assertions.assertEquals(testValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
 	}
 
 	@Test
@@ -171,15 +170,15 @@ public class InputManagerTest {
 	private static class SimulatedInputProvider implements InputProvider {
 		private final Queue<InputEvent<?, ?, ?>> events = new LinkedList<>();
 		private final Keyboard keyboard;
-        private final Gamepad gamepad;
+		private final Gamepad gamepad;
 
 		public SimulatedInputProvider() {
 			keyboard = new Keyboard(this, false);
 			keyboard.value(InputDevice.Info.NAME, "SIMULATED", 0);
 			keyboard.value(InputDevice.Info.UUID, "SIMULATED_UUID", 0);
-            gamepad=new Gamepad(this,false);
-            gamepad.value(InputDevice.Info.NAME,"SIMULATED_GAMEPAD",0);
-            gamepad.value(InputDevice.Info.UUID,"SIMULATED_GAMEPAD_UUID",0);
+			gamepad = new Gamepad(this, false);
+			gamepad.value(InputDevice.Info.NAME, "SIMULATED_GAMEPAD", 0);
+			gamepad.value(InputDevice.Info.UUID, "SIMULATED_GAMEPAD_UUID", 0);
 		}
 
 		@Override

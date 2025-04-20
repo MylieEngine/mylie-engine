@@ -48,26 +48,4 @@ public class Gamepad extends InputDevice<Gamepad> {
 	interface GamepadInput<V> extends Input<Gamepad, V> {
 
 	}
-
-	/*
-	 * public abstract static class Event<I extends GamepadInput<V>, V> extends
-	 * InputEvent<Gamepad, I, V> { public Event(Gamepad device, I inputId, V value)
-	 * { super(device, inputId, value); } }
-	 *
-	 * public static final class ButtonEvent extends Event<Button, Boolean> { public
-	 * ButtonEvent(Gamepad device, Button inputId, Boolean value) { super(device,
-	 * inputId, value); } }
-	 *
-	 * public static final class AxisEvent extends Event<Axis, Float> { public
-	 * AxisEvent(Gamepad device, Axis inputId, Float value) { super(device, inputId,
-	 * value); } }
-	 *
-	 * public static final class PointerEvent extends Event<Pointer, Vec2f> { public
-	 * PointerEvent(Gamepad device, Pointer inputId, Vec2f value) { super(device,
-	 * inputId, value); } }
-	 *
-	 * public static final class StateEvent extends Event<State, State> { public
-	 * StateEvent(Gamepad device, State inputId, State value) { super(device,
-	 * inputId, value); } }
-	 */
 }

@@ -40,22 +40,4 @@ public class Mouse extends InputDevice<Mouse> {
 	interface MouseInput<V> extends Input<Mouse, V> {
 
 	}
-
-	/*
-	 * public abstract static class Event<I extends MouseInput<V>, V> extends
-	 * InputEvent<Mouse, I, V> { public Event(Mouse device, I inputId, V value) {
-	 * super(device, inputId, value); } }
-	 *
-	 * public static final class ButtonEvent extends Event<Button, Boolean> { public
-	 * ButtonEvent(Mouse device, Button inputId, Boolean value) { super(device,
-	 * inputId, value); } }
-	 *
-	 * public static final class AxisEvent extends Event<Axis, Float> { public
-	 * AxisEvent(Mouse device, Axis inputId, Float value) { super(device, inputId,
-	 * value); } }
-	 *
-	 * public static final class CursorEvent extends Event<Cursor, Vec2f> { public
-	 * CursorEvent(Mouse device, Cursor inputId, Vec2f value) { super(device,
-	 * inputId, value); } }
-	 */
 }

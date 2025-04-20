@@ -23,14 +23,4 @@ public class Keyboard extends InputDevice<Keyboard> {
 	interface KeyboardInput<V> extends Input<Keyboard, V> {
 
 	}
-
-	/*
-	 * public abstract static class Event<I extends KeyboardInput<V>, V> extends
-	 * InputEvent<Keyboard, I, V> { public Event(Keyboard source, I id, V value) {
-	 * super(source, id, value); } }
-	 *
-	 * public static final class KeyEvent extends Event<Key, Boolean> { public
-	 * KeyEvent(Keyboard source, Key id, Boolean value) { super(source, id, value);
-	 * } }
-	 */
 }

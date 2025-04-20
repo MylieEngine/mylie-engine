@@ -48,33 +48,31 @@ public class InputManager extends Components.Core {
 		}
 	}
 
-	private <T extends InputDevice<T>> void enableMapping(T virtualDevice, T actualDevice) {
+	private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
 		virtualDevice.provider(actualDevice.provider());
-		processInputEvent(new InputEvent<>(virtualDevice, InputDevice.State.MAPPED, true));
+		processInputEvent(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
-			processInputEvent(new InputEvent<>(virtualDevice, value, actualDevice.value(value)));
+			processInputEvent(new InputEvent(virtualDevice, value, actualDevice.value(value)));
 		}
-		for (Input<?, ?> input : actualDevice.states().keySet()) {
+		for (Input<? super D, ?> input : actualDevice.states().keySet()) {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				continue;
 			}
-			Input<T, ?> castedInput = (Input<T, ?>) input;
-			processInputEvent(new InputEvent(virtualDevice, castedInput, actualDevice.value(castedInput)));
+			processInputEvent(new InputEvent(virtualDevice, input, actualDevice.value(input)));
 		}
 	}
 
-	private <T extends InputDevice<T>> void disableMapping(T virtualDevice) {
+	private <D extends InputDevice<D>> void disableMapping(D virtualDevice) {
 		virtualDevice.provider(null);
-		processInputEvent(new InputEvent<>(virtualDevice, InputDevice.State.MAPPED, false));
+		processInputEvent(new InputEvent(virtualDevice, InputDevice.State.MAPPED, false));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
-			processInputEvent(new InputEvent<>(virtualDevice, value, value.defaultValue()));
+			processInputEvent(new InputEvent(virtualDevice, value, value.defaultValue()));
 		}
-		virtualDevice.states().forEach((input, state) -> {
+		virtualDevice.states().forEach((input, _) -> {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				return;
 			}
-			Input<T, ?> castedInput = (Input<T, ?>) input;
-			processInputEvent(new InputEvent(virtualDevice, castedInput, castedInput.defaultValue()));
+			processInputEvent(new InputEvent(virtualDevice, input, input.defaultValue()));
 		});
 	}
 
@@ -84,26 +82,25 @@ public class InputManager extends Components.Core {
 		pollInputProviders();
 	}
 
-	@SuppressWarnings("unchecked")
-	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvent(InputEvent<?, ?, ?> event) {
+	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvent(InputEvent<D, I, V> event) {
 		for (InputProcessor inputProcessor : inputProcessors) {
 			event = inputProcessor.process(event, this::processInputEvent);
 		}
-		InputEvent<D, I, V> castedEvent = (InputEvent<D, I, V>) event;
-		D device = castedEvent.device();
-		device.value(castedEvent.inputId(), castedEvent.value(), timer == null ? 0 : timer.currentTime().frameId());
+		D device = event.device();
+		device.value(event.inputId(), event.value(), timer == null ? 0 : timer.currentTime().frameId());
 		eventManager.fireEvent(event);
 	}
 
-	private void processInputEvents(List<InputEvent<?, ?, ?>> events) {
+	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvents(
+			List<InputEvent<D, I, V>> events) {
 		System.out.println(events.size() + " events to process");
-		for (InputEvent<?, ?, ?> event : events) {
+		for (InputEvent<D, I, V> event : events) {
 			processInputEvent(event);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void pollInputProviders() {
+		@SuppressWarnings("unchecked")
 		CompletableFuture<Void>[] futures = new CompletableFuture[inputProviders.size()];
 		for (int i = 0; i < inputProviders.size(); i++) {
 			futures[i] = inputProviders.get(i).pollInputEvents().thenAccept(this::processInputEvents)
