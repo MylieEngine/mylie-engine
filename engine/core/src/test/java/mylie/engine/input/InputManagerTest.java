@@ -13,6 +13,7 @@ import mylie.engine.input.devices.Gamepad;
 import mylie.engine.input.devices.Keyboard;
 import mylie.engine.input.devices.Mouse;
 import mylie.engine.input.processors.AxisDeathZone;
+import mylie.engine.math.Vec2f;
 import mylie.engine.util.Versioned;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -149,7 +150,7 @@ public class InputManagerTest {
 		inputProvider.addEvent(inputProvider.gamepad,Gamepad.Axis.LEFT_Y,testValue);
 		inputManager.onUpdate();
 		Assertions.assertEquals(testValue,inputManager.device(Gamepad.class,0).value(Gamepad.Axis.LEFT_Y));
-    }
+	}
 
 	@Test
 	public void testInstantiation() {
