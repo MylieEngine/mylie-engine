@@ -4,6 +4,7 @@ import mylie.engine.input.Input;
 import mylie.engine.input.InputDevice;
 import mylie.engine.input.InputProvider;
 import mylie.engine.math.Vec2f;
+@SuppressWarnings("unused")
 public class Gamepad extends InputDevice<Gamepad> {
 	public Gamepad(InputProvider provider, boolean virtual) {
 		super(Gamepad.class, virtual, provider);

@@ -187,10 +187,10 @@ public class InputManagerTest {
 		}
 
 		@Override
-		public Result<List<InputEvent<?, ?, ?>>> pollInputEvents() {
-			List<InputEvent<?, ?, ?>> copy = new LinkedList<>();
+		public <D extends InputDevice<D>, I extends Input<D, V>, V> Result<List<InputEvent<D, I, V>>> pollInputEvents() {
+			List<InputEvent<D, I, V>> copy = new LinkedList<>();
 			while (!events.isEmpty()) {
-				copy.add(events.poll());
+				copy.add((InputEvent<D, I, V>) events.poll());
 			}
 			return Result.of(copy);
 		}
