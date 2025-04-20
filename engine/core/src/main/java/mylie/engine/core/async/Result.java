@@ -42,4 +42,10 @@ public final class Result<T> {
 	static <T> Result<T> of(Target target, Hash hash, long version, Supplier<T> supplier) {
 		return new Result<>(target, hash, version, supplier, new CompletableFuture<>());
 	}
+
+	public static <T> Result<T> of(T value) {
+		CompletableFuture<T> future = new CompletableFuture<>();
+		future.complete(value);
+		return new Result<>(null, null, 0, null, future);
+	}
 }

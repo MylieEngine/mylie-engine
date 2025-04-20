@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.concurrent.*;
 import mylie.engine.core.ComponentManager;
 import mylie.engine.core.Components;
-import mylie.engine.event.Event;
+import mylie.engine.core.Timer;
 import mylie.engine.event.EventManager;
 import mylie.engine.input.devices.Gamepad;
 import mylie.engine.input.devices.Keyboard;
@@ -16,18 +16,21 @@ public class InputManager extends Components.Core {
 	private final List<InputProvider> inputProviders;
 	private final List<InputProcessor> inputProcessors;
 	private final Map<Class<? extends InputDevice<?>>, List<InputDevice<?>>> inputDevices;
+	private Timer timer;
 	EventManager eventManager;
 	public InputManager(ComponentManager manager) {
 		super(manager);
 		this.inputProviders = new CopyOnWriteArrayList<>();
 		this.inputProcessors = new CopyOnWriteArrayList<>();
 		this.inputDevices = new ConcurrentHashMap<>();
+		this.inputProcessors.add(new InputProcessors.ReMapper(this));
 	}
 
 	@Override
 	protected void onAdded() {
 		super.onAdded();
 		eventManager = Objects.requireNonNull(component(EventManager.class));
+		timer = component(Timer.class);
 		devices(Keyboard.class).add(new Keyboard(null, true));
 		devices(Mouse.class).add(new Mouse(null, true));
 		for (int i = 0; i < 4; i++) {
@@ -47,10 +50,32 @@ public class InputManager extends Components.Core {
 
 	private <T extends InputDevice<T>> void enableMapping(T virtualDevice, T actualDevice) {
 		virtualDevice.provider(actualDevice.provider());
+		processInputEvent(new InputEvent<>(virtualDevice, InputDevice.State.MAPPED, true));
+		for (InputDevice.Info value : InputDevice.Info.values()) {
+			processInputEvent(new InputEvent<>(virtualDevice, value, actualDevice.value(value)));
+		}
+		for (Input<?, ?> input : actualDevice.states().keySet()) {
+			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
+				continue;
+			}
+			Input<T, ?> castedInput = (Input<T, ?>) input;
+			processInputEvent(new InputEvent(virtualDevice, castedInput, actualDevice.value(castedInput)));
+		}
 	}
 
 	private <T extends InputDevice<T>> void disableMapping(T virtualDevice) {
 		virtualDevice.provider(null);
+		processInputEvent(new InputEvent<>(virtualDevice, InputDevice.State.MAPPED, false));
+		for (InputDevice.Info value : InputDevice.Info.values()) {
+			processInputEvent(new InputEvent<>(virtualDevice, value, value.defaultValue()));
+		}
+		virtualDevice.states().forEach((input, state) -> {
+			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
+				return;
+			}
+			Input<T, ?> castedInput = (Input<T, ?>) input;
+			processInputEvent(new InputEvent(virtualDevice, castedInput, castedInput.defaultValue()));
+		});
 	}
 
 	@Override
@@ -59,14 +84,19 @@ public class InputManager extends Components.Core {
 		pollInputProviders();
 	}
 
-	private void processInputEvent(InputEvent<?, ?, ?> event) {
+	@SuppressWarnings("unchecked")
+	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvent(InputEvent<?, ?, ?> event) {
 		for (InputProcessor inputProcessor : inputProcessors) {
 			event = inputProcessor.process(event, this::processInputEvent);
 		}
+		InputEvent<D, I, V> castedEvent = (InputEvent<D, I, V>) event;
+		D device = castedEvent.device();
+		device.value(castedEvent.inputId(), castedEvent.value(), timer == null ? 0 : timer.currentTime().frameId());
 		eventManager.fireEvent(event);
 	}
 
 	private void processInputEvents(List<InputEvent<?, ?, ?>> events) {
+		System.out.println(events.size() + " events to process");
 		for (InputEvent<?, ?, ?> event : events) {
 			processInputEvent(event);
 		}

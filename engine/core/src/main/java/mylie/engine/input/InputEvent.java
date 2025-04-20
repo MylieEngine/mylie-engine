@@ -1,17 +1,12 @@
 package mylie.engine.input;
 
-import lombok.Getter;
 import mylie.engine.event.Event;
 
-@Getter
-public abstract class InputEvent<D extends InputDevice<D>, I extends Input<D, V>, V> implements Event {
-	private final D device;
-	private final I inputId;
-	private final V value;
+public record InputEvent<D extends InputDevice<D>, I extends Input<? super D, V>, V>(D device, I inputId,
+		V value) implements Event {
 
-	public InputEvent(D device, I inputId, V value) {
-		this.device = device;
-		this.inputId = inputId;
-		this.value = value;
+	public InputEvent<D, I, V> with(D device, I inputId, V value) {
+		return new InputEvent<>(device != null ? device : this.device, inputId != null ? inputId : this.inputId,
+				value != null ? value : this.value);
 	}
 }

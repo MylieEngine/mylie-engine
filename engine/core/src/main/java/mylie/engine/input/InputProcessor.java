@@ -22,5 +22,6 @@ public interface InputProcessor {
 	 * @return the result of processing the input event, which could be the same event,
 	 *         or a completely new event
 	 */
-	InputEvent<?, ?, ?> process(InputEvent<?, ?, ?> event, Consumer<InputEvent<?, ?, ?>> additionalEvents);
+	<D extends InputDevice<D>, I extends Input<D, V>, V> InputEvent<?, ?, ?> process(InputEvent<?, ?, ?> event,
+			Consumer<InputEvent<?, ?, ?>> additionalEvents);
 }
