@@ -9,11 +9,11 @@ public class Versioned<T> {
 	@Getter
 	private long frameId;
 
-    public Versioned(T value) {
-        this.value = value;
-    }
+	public Versioned(T value) {
+		this.value = value;
+	}
 
-    public void value(T value, long frameId) {
+	public void value(T value, long frameId) {
 		this.value = value;
 		this.frameId = frameId;
 		this.version++;
@@ -38,11 +38,11 @@ public class Versioned<T> {
 			this.frameId = versioned.frameId;
 		}
 
-		private Ref(Versioned<T> versioned,T value,long version,long frameId){
-			this.versioned=versioned;
-			this.value=value;
-			this.version=version;
-			this.frameId=frameId;
+		private Ref(Versioned<T> versioned, T value, long version, long frameId) {
+			this.versioned = versioned;
+			this.value = value;
+			this.version = version;
+			this.frameId = frameId;
 		}
 
 		public boolean isUpToDate() {
@@ -74,7 +74,7 @@ public class Versioned<T> {
 		}
 
 		public Ref<T> ref() {
-			return new Ref<>(versioned,value,version,frameId);
+			return new Ref<>(versioned, value, version, frameId);
 		}
 	}
 }

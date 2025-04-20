@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.async.Cache;
 import mylie.engine.core.async.Scheduler;
+import mylie.engine.event.EventManager;
+import mylie.engine.input.InputManager;
 
 @Slf4j
 final class Core {
@@ -27,6 +29,12 @@ final class Core {
 		vault.addItem(settings);
 		componentManager.addComponent(Scheduler.class);
 		componentManager.addComponent(Timer.class);
+		initScheduler();
+		componentManager.addComponent(EventManager.class);
+		componentManager.addComponent(InputManager.class);
+	}
+
+	private void initScheduler() {
 		Cache.registerDefaults(componentManager.component(Scheduler.class));
 		componentManager().component(Scheduler.class).register(Engine.TARGET, mainThreadQueue::add);
 	}
