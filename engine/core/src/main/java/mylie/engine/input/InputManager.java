@@ -51,7 +51,8 @@ public class InputManager extends Components.Core {
 		}
 	}
 
-	private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
+	@SuppressWarnings({"unchecked", "rawtypes"})
+    private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
 		virtualDevice.provider(actualDevice.provider());
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
