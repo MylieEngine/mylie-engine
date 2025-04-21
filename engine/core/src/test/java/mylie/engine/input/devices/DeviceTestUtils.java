@@ -4,8 +4,10 @@ import mylie.engine.input.Input;
 import mylie.engine.input.InputDevice;
 import org.junit.jupiter.api.Assertions;
 
+
 public class DeviceTestUtils {
-	public static <D extends InputDevice<D>, I extends Input<D, V>, V> void testDefaultValues(D device,
+    @SuppressWarnings("unused")
+    public static <D extends InputDevice<D>, I extends Input<D, V>, V> void testDefaultValues(D device,
 			Input<D, V>[] inputs, V defaultValue) {
 		for (Input<D, V> input : inputs) {
 			Assertions.assertEquals(defaultValue, device.value(input));
