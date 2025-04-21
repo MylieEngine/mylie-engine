@@ -9,7 +9,7 @@ import mylie.engine.util.Versioned;
 
 public class InputDevice<D extends InputDevice<D>> {
 	public enum State implements Input<InputDevice<?>, Boolean> {
-		MAPPED;
+		MAPPED, CONNECTED;
 
 		@Override
 		public Boolean defaultValue() {

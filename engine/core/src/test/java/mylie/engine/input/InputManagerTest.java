@@ -1,229 +1,98 @@
 package mylie.engine.input;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import mylie.engine.core.ComponentManager;
 import mylie.engine.core.Timer;
 import mylie.engine.core.async.Result;
-import mylie.engine.event.Event;
-import mylie.engine.event.EventListener;
 import mylie.engine.event.EventManager;
-import mylie.engine.input.devices.Gamepad;
 import mylie.engine.input.devices.Keyboard;
-import mylie.engine.input.devices.Mouse;
 import mylie.engine.input.processors.AxisDeathZone;
-import mylie.engine.util.Versioned;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 public class InputManagerTest {
 	InputManager inputManager;
-	SimulatedInputProvider inputProvider = new SimulatedInputProvider();
-	SimulatedInputListener inputListener = new SimulatedInputListener();
+
 	@BeforeEach
 	public void setup() {
-		ComponentManager componentManager = new ComponentManager();
-		componentManager.addComponent(Timer.class);
-		componentManager.addComponent(EventManager.class);
-		inputManager = componentManager.addComponent(InputManager.class);
-		inputManager.registerInputProvider(inputProvider);
-		componentManager.component(EventManager.class).registerListener(inputListener);
+		inputManager = inputManager();
 	}
 
 	@Test
-	void testGetDefaultDevices() {
-		List<Keyboard> keyboards = inputManager.devices(Keyboard.class);
-		Assertions.assertNotNull(keyboards);
-		Assertions.assertEquals(1, keyboards.size());
-
-		List<Mouse> mouses = inputManager.devices(Mouse.class);
-		Assertions.assertNotNull(mouses);
-		Assertions.assertEquals(1, mouses.size());
-
-		List<Gamepad> gamepads = inputManager.devices(Gamepad.class);
-		Assertions.assertNotNull(gamepads);
-		Assertions.assertEquals(4, gamepads.size());
-
-		Assertions.assertEquals(gamepads.getFirst(), inputManager.device(Gamepad.class, 0));
+	void testProcessorAccess() {
+		Assertions.assertNull(inputManager.processor(AxisDeathZone.class));
+		inputManager.registerInputProcessor(new AxisDeathZone(0.5f));
+		Assertions.assertNotNull(inputManager.processor(AxisDeathZone.class));
+		inputManager.unregisterInputProcessor(inputManager.processor(AxisDeathZone.class));
+		Assertions.assertNull(inputManager.processor(AxisDeathZone.class));
 	}
 
 	@Test
-	void testFireEvent() {
-		Versioned.Ref<Boolean> A_KEY = inputManager.device(Keyboard.class, 0).ref(Keyboard.Key.A);
-		Assertions.assertFalse(A_KEY.value(true));
-		inputProvider.addEvent(inputManager.device(Keyboard.class, 0), Keyboard.Key.A, true);
-		inputManager.onUpdate();
-		Assertions.assertEquals(true, A_KEY.value(true));
-		Assertions.assertEquals(1, inputListener.events.size());
-		Assertions.assertEquals(inputManager.device(Keyboard.class, 0), inputListener.events.getFirst().device());
-		Assertions.assertEquals(Keyboard.Key.A, inputListener.events.getFirst().inputId());
-		Assertions.assertEquals(true, inputListener.events.getFirst().value());
-		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
+	void testProviderAccess() {
+		Assertions.assertNull(inputManager.provider(NotRegisteredProvider.class));
+		Assertions.assertNotNull(inputManager.provider(ProvideNextFrame.class));
+		inputManager.unregisterInputProvider(inputManager.provider(ProvideNextFrame.class));
+		Assertions.assertNull(inputManager.provider(ProvideNextFrame.class));
+		inputManager.registerInputProvider(new ProvideNextFrame());
+		Assertions.assertNotNull(inputManager.provider(ProvideNextFrame.class));
 	}
 
 	@Test
-	void testFireEventWithNonMappedDevice() {
-		Keyboard virtualKeyboard = inputManager.device(Keyboard.class, 0);
-		Assertions.assertTrue(virtualKeyboard.isVirtual());
-		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
-		inputManager.onUpdate();
-		Assertions.assertFalse(virtualKeyboard.value(Keyboard.Key.A));
-		Assertions.assertEquals(1, inputListener.events.size());
-		Assertions.assertEquals(inputProvider.keyboard, inputListener.events.getFirst().device());
-		inputListener.events.clear();
-
-		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
-		inputManager.onUpdate();
-		Assertions.assertTrue(virtualKeyboard.value(InputDevice.State.MAPPED));
-		Assertions.assertNotNull(virtualKeyboard.value(InputDevice.Info.NAME));
-		Assertions.assertEquals("SIMULATED", virtualKeyboard.value(InputDevice.Info.NAME));
-		Assertions.assertNotNull(virtualKeyboard.value(InputDevice.Info.UUID));
-		Assertions.assertEquals("SIMULATED_UUID", virtualKeyboard.value(InputDevice.Info.UUID));
-		inputListener.events.clear();
-
-		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
-		inputManager.onUpdate();
-		Assertions.assertEquals(true, virtualKeyboard.value(Keyboard.Key.A));
-		Assertions.assertEquals(1, inputListener.events.size());
-		Assertions.assertEquals(virtualKeyboard, inputListener.events.getFirst().device());
-		Assertions.assertEquals(Keyboard.Key.A, inputListener.events.getFirst().inputId());
-		Assertions.assertEquals(true, inputListener.events.getFirst().value());
+	void testDeviceQuery() {
+		Assertions.assertTrue(inputManager.available(Keyboard.class, 0));
+		Assertions.assertFalse(inputManager.available(Keyboard.class, 1));
+		Assertions.assertFalse(inputManager.available(NotRegisteredDevice.class, 0));
 	}
 
 	@Test
-	void testFireInitialValueEvents() {
-		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
-		inputManager.onUpdate();
+	void testMapDeviceLifecycle() {
+		Keyboard keyboard = new Keyboard(new InputProvider() {
+			@Override
+			public <D extends InputDevice<D>, I extends Input<D, V>, V> Result<List<InputEvent<D, I, V>>> pollInputEvents() {
+				return null;
+			}
+		}, false);
+		keyboard.value(InputDevice.Info.UUID, "ACTUAL", 0);
+		keyboard.value(InputDevice.Info.NAME, "THE_NAME", 0);
+		keyboard.value(Keyboard.Key.A, true, 0);
+		keyboard.value(InputDevice.State.CONNECTED, true, 0);
+		inputManager.mapDevice(Keyboard.class, 0, keyboard);
 		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
-		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
-		inputManager.onUpdate();
+		Assertions.assertEquals("", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.NAME));
+		Assertions.assertEquals("", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.UUID));
+		update(inputManager);
 		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
-	}
-
-	@Test
-	void testRemoveMapping() {
-		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
-		inputManager.onUpdate();
-		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
-		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
-		inputManager.onUpdate();
-		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
+		Assertions.assertEquals("THE_NAME", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.NAME));
+		Assertions.assertEquals("ACTUAL", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.UUID));
 		inputManager.mapDevice(Keyboard.class, 0, null);
-		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
-		inputManager.onUpdate();
+		update(inputManager);
 		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
-		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(InputDevice.State.MAPPED));
+		Assertions.assertEquals("", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.NAME));
+		Assertions.assertEquals("", inputManager.device(Keyboard.class, 0).value(InputDevice.Info.UUID));
 	}
 
-	@Test
-	void testUpdateDoesNotThrowException() {
-		Assertions.assertDoesNotThrow(inputManager::onUpdate);
-	}
-
-	@Test
-	void testRemoveProvider() {
-		inputManager.unregisterInputProvider(inputProvider);
-		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
-		inputManager.onUpdate();
-		Assertions.assertEquals(0, inputListener.events.size());
-	}
-
-	@Test
-	void testAxisDeathZone() {
-		float defaultValue = 1;
-		float testValue = 0.05f;
-		inputManager.mapDevice(Gamepad.class, 0, inputProvider.gamepad);
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(testValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-		AxisDeathZone axisDeathZone = new AxisDeathZone(0.1f);
-		inputManager.registerInputProcessor(axisDeathZone);
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(0, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, defaultValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(defaultValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-		inputManager.unregisterInputProcessor(axisDeathZone);
-		inputProvider.addEvent(inputProvider.gamepad, Gamepad.Axis.LEFT_Y, testValue);
-		inputManager.onUpdate();
-		Assertions.assertEquals(testValue, inputManager.device(Gamepad.class, 0).value(Gamepad.Axis.LEFT_Y));
-	}
-
-	@Test
-	void testIllegalMapping() {
-		Keyboard device = inputManager.device(Keyboard.class, 0);
-		Assertions.assertThrows(IllegalArgumentException.class,
-				() -> inputManager.mapDevice(Keyboard.class, 0, device));
-	}
-
-	@Test
-	void testDeviceOutOfBounds() {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> inputManager.device(Gamepad.class, 4));
-	}
-
-	@Test
-	void testUnregisteredDevice() {
-		SomeOtherInputDevice device = new SomeOtherInputDevice(SomeOtherInputDevice.class, false, inputProvider);
-		Assertions.assertThrows(IllegalArgumentException.class,
-				() -> inputManager.mapDevice(SomeOtherInputDevice.class, 0, device));
-	}
-
-	@Test
-	public void testInstantiation() {
-		Assertions.assertNotNull(inputManager);
-	}
-
-	private static class SomeOtherInputDevice extends InputDevice<SomeOtherInputDevice> {
-		public SomeOtherInputDevice(Class<SomeOtherInputDevice> type, boolean isVirtual, InputProvider provider) {
+	private static class NotRegisteredDevice extends InputDevice<NotRegisteredDevice> {
+		public NotRegisteredDevice(Class<NotRegisteredDevice> type, boolean isVirtual, InputProvider provider) {
 			super(type, isVirtual, provider);
 		}
 	}
 
-	private static class SimulatedInputListener implements EventListener {
-		List<InputEvent<?, ?, ?>> events = new LinkedList<>();
+	private static class NotRegisteredProvider implements InputProvider {
 		@Override
-		public void onEvent(Event event) {
-			if (event instanceof InputEvent<?, ?, ?> inputEvent) {
-				System.out.println(event.getClass().getSimpleName());
-				this.events.add(inputEvent);
-			}
+		public <D extends InputDevice<D>, I extends Input<D, V>, V> Result<List<InputEvent<D, I, V>>> pollInputEvents() {
+			return null;
 		}
 	}
 
-	private static class SimulatedInputProvider implements InputProvider {
-		private final Queue<InputEvent<?, ?, ?>> events = new LinkedList<>();
-		private final Keyboard keyboard;
-		private final Gamepad gamepad;
+	public static InputManager inputManager() {
+		ComponentManager componentManager = new ComponentManager();
+		componentManager.addComponent(Timer.class);
+		componentManager.addComponent(EventManager.class);
+		return componentManager.addComponent(InputManager.class);
+	}
 
-		public SimulatedInputProvider() {
-			keyboard = new Keyboard(this, false);
-			keyboard.value(InputDevice.Info.NAME, "SIMULATED", 0);
-			keyboard.value(InputDevice.Info.UUID, "SIMULATED_UUID", 0);
-			gamepad = new Gamepad(this, false);
-			gamepad.value(InputDevice.Info.NAME, "SIMULATED_GAMEPAD", 0);
-			gamepad.value(InputDevice.Info.UUID, "SIMULATED_GAMEPAD_UUID", 0);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <D extends InputDevice<D>, I extends Input<D, V>, V> Result<List<InputEvent<D, I, V>>> pollInputEvents() {
-			List<InputEvent<D, I, V>> copy = new LinkedList<>();
-			while (!events.isEmpty()) {
-				copy.add((InputEvent<D, I, V>) events.poll());
-			}
-			return Result.of(copy);
-		}
-
-		<D extends InputDevice<D>, I extends Input<D, V>, V> void addEvent(D device, I input, V value) {
-			events.add(new InputEvent<>(device, input, value));
-		}
+	public static void update(InputManager inputManager) {
+		inputManager.onUpdate();
 	}
 }

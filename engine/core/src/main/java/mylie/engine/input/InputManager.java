@@ -25,7 +25,7 @@ public class InputManager extends Components.Core {
 		this.inputProcessors = new CopyOnWriteArrayList<>();
 		this.inputDevices = new ConcurrentHashMap<>();
 		this.nextFrameProvider = new ProvideNextFrame();
-		this.inputProcessors.add(new InputProcessors.ReMapper(this));
+		this.inputProcessors.add(new DeviceRemapper(this));
 		this.inputProviders.add(nextFrameProvider);
 	}
 
@@ -92,7 +92,7 @@ public class InputManager extends Components.Core {
 			event = inputProcessor.process(event, this::processInputEvent);
 		}
 		D device = event.device();
-		device.value(event.inputId(), event.value(), timer == null ? 0 : timer.currentTime().frameId());
+		device.value(event.inputId(), event.value(), timer.currentTime().frameId());
 		eventManager.fireEvent(event);
 	}
 
@@ -144,5 +144,31 @@ public class InputManager extends Components.Core {
 
 	public void unregisterInputProcessor(InputProcessor processor) {
 		inputProcessors.remove(processor);
+	}
+
+	public <P extends InputProcessor> P processor(Class<P> type) {
+		for (InputProcessor inputProcessor : inputProcessors) {
+			if (type.isInstance(inputProcessor)) {
+				return type.cast(inputProcessor);
+			}
+		}
+		return null;
+	}
+
+	public <P extends InputProvider> P provider(Class<P> type) {
+		for (InputProvider inputProvider : inputProviders) {
+			if (type.isInstance(inputProvider)) {
+				return type.cast(inputProvider);
+			}
+		}
+		return null;
+	}
+
+	public boolean available(Class<? extends InputDevice<?>> type) {
+		return this.inputDevices.containsKey(type);
+	}
+
+	public boolean available(Class<? extends InputDevice<?>> type, int id) {
+		return available(type) && this.inputDevices.get(type).size() > id;
 	}
 }

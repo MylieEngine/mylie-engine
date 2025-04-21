@@ -1,6 +1,7 @@
 package mylie.engine.input.processors;
 
 import java.util.function.Consumer;
+import lombok.Setter;
 import mylie.engine.input.Input;
 import mylie.engine.input.InputDevice;
 import mylie.engine.input.InputEvent;
@@ -8,6 +9,7 @@ import mylie.engine.input.InputProcessor;
 import mylie.engine.input.devices.Gamepad;
 
 public final class AxisDeathZone implements InputProcessor {
+	@Setter
 	float threshold;
 
 	public AxisDeathZone(float threshold) {
