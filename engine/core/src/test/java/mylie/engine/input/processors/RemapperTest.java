@@ -14,7 +14,7 @@ class RemapperTest {
 	Keyboard keyboard;
 	@BeforeEach
 	void setUp() {
-		inputManager = InputManagerTest.inputManager();
+		inputManager = InputManagerTest.buildTestInputManager();
 		remapper = inputManager.processor(DeviceRemapper.class);
 		keyboard = new Keyboard(new InputProvider() {
 			@Override
