@@ -213,7 +213,7 @@ public class InputManagerTest {
 		}
 
 		@SuppressWarnings("unchecked")
-        @Override
+		@Override
 		public <D extends InputDevice<D>, I extends Input<D, V>, V> Result<List<InputEvent<D, I, V>>> pollInputEvents() {
 			List<InputEvent<D, I, V>> copy = new LinkedList<>();
 			while (!events.isEmpty()) {

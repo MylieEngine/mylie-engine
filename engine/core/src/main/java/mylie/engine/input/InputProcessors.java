@@ -19,10 +19,9 @@ class InputProcessors {
 				String uuid = event.device().value(InputDevice.Info.UUID);
 				List<D> devices = inputManager.devices(event.device().type());
 				for (D device : devices) {
-					if (device.value(InputDevice.Info.UUID) != null) {
-						if (device.value(InputDevice.Info.UUID).equals(uuid)) {
-							return event.with(device, null, null);
-						}
+					if (device.value(InputDevice.Info.UUID) != null
+							&& device.value(InputDevice.Info.UUID).equals(uuid)) {
+						return event.with(device, null, null);
 					}
 				}
 			}
