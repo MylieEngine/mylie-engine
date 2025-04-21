@@ -16,6 +16,7 @@ public class InputManager extends Components.Core {
 	private final List<InputProvider> inputProviders;
 	private final List<InputProcessor> inputProcessors;
 	private final Map<Class<? extends InputDevice<?>>, List<InputDevice<?>>> inputDevices;
+	private final ProvideNextFrame nextFrameProvider;
 	private Timer timer;
 	EventManager eventManager;
 	public InputManager(ComponentManager manager) {
@@ -23,7 +24,9 @@ public class InputManager extends Components.Core {
 		this.inputProviders = new CopyOnWriteArrayList<>();
 		this.inputProcessors = new CopyOnWriteArrayList<>();
 		this.inputDevices = new ConcurrentHashMap<>();
+		this.nextFrameProvider = new ProvideNextFrame();
 		this.inputProcessors.add(new InputProcessors.ReMapper(this));
+		this.inputProviders.add(nextFrameProvider);
 	}
 
 	@Override
@@ -50,29 +53,30 @@ public class InputManager extends Components.Core {
 
 	private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
 		virtualDevice.provider(actualDevice.provider());
-		processInputEvent(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
+		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
-			processInputEvent(new InputEvent(virtualDevice, value, actualDevice.value(value)));
+			nextFrameProvider.event(new InputEvent(virtualDevice, value, actualDevice.value(value)));
 		}
 		for (Input<? super D, ?> input : actualDevice.states().keySet()) {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				continue;
 			}
-			processInputEvent(new InputEvent(virtualDevice, input, actualDevice.value(input)));
+			nextFrameProvider.event(new InputEvent(virtualDevice, input, actualDevice.value(input)));
 		}
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <D extends InputDevice<D>> void disableMapping(D virtualDevice) {
 		virtualDevice.provider(null);
-		processInputEvent(new InputEvent(virtualDevice, InputDevice.State.MAPPED, false));
+		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, false));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
-			processInputEvent(new InputEvent(virtualDevice, value, value.defaultValue()));
+			nextFrameProvider.event(new InputEvent(virtualDevice, value, value.defaultValue()));
 		}
 		virtualDevice.states().forEach((input, _) -> {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				return;
 			}
-			processInputEvent(new InputEvent(virtualDevice, input, input.defaultValue()));
+			nextFrameProvider.event(new InputEvent(virtualDevice, input, input.defaultValue()));
 		});
 	}
 

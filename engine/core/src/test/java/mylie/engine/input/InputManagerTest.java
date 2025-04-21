@@ -74,6 +74,7 @@ public class InputManagerTest {
 		inputListener.events.clear();
 
 		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
+		inputManager.onUpdate();
 		Assertions.assertTrue(virtualKeyboard.value(InputDevice.State.MAPPED));
 		Assertions.assertNotNull(virtualKeyboard.value(InputDevice.Info.NAME));
 		Assertions.assertEquals("SIMULATED", virtualKeyboard.value(InputDevice.Info.NAME));
@@ -96,6 +97,7 @@ public class InputManagerTest {
 		inputManager.onUpdate();
 		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
 		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
+		inputManager.onUpdate();
 		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
 	}
 
@@ -104,8 +106,12 @@ public class InputManagerTest {
 		inputProvider.addEvent(inputProvider.keyboard, Keyboard.Key.A, true);
 		inputManager.onUpdate();
 		inputManager.mapDevice(Keyboard.class, 0, inputProvider.keyboard);
+		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
+		inputManager.onUpdate();
 		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
 		inputManager.mapDevice(Keyboard.class, 0, null);
+		Assertions.assertTrue(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
+		inputManager.onUpdate();
 		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(Keyboard.Key.A));
 		Assertions.assertFalse(inputManager.device(Keyboard.class, 0).value(InputDevice.State.MAPPED));
 	}
@@ -152,8 +158,33 @@ public class InputManagerTest {
 	}
 
 	@Test
+	void testIllegalMapping() {
+		Keyboard device = inputManager.device(Keyboard.class, 0);
+		Assertions.assertThrows(IllegalArgumentException.class,
+				() -> inputManager.mapDevice(Keyboard.class, 0, device));
+	}
+
+	@Test
+	void testDeviceOutOfBounds() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> inputManager.device(Gamepad.class, 4));
+	}
+
+	@Test
+	void testUnregisteredDevice() {
+		SomeOtherInputDevice device = new SomeOtherInputDevice(SomeOtherInputDevice.class, false, inputProvider);
+		Assertions.assertThrows(IllegalArgumentException.class,
+				() -> inputManager.mapDevice(SomeOtherInputDevice.class, 0, device));
+	}
+
+	@Test
 	public void testInstantiation() {
 		Assertions.assertNotNull(inputManager);
+	}
+
+	private static class SomeOtherInputDevice extends InputDevice<SomeOtherInputDevice> {
+		public SomeOtherInputDevice(Class<SomeOtherInputDevice> type, boolean isVirtual, InputProvider provider) {
+			super(type, isVirtual, provider);
+		}
 	}
 
 	private static class SimulatedInputListener implements EventListener {
@@ -179,11 +210,6 @@ public class InputManagerTest {
 			gamepad = new Gamepad(this, false);
 			gamepad.value(InputDevice.Info.NAME, "SIMULATED_GAMEPAD", 0);
 			gamepad.value(InputDevice.Info.UUID, "SIMULATED_GAMEPAD_UUID", 0);
-		}
-
-		@Override
-		public List<InputDevice<?>> supportedInputDevices() {
-			return List.of();
 		}
 
 		@Override

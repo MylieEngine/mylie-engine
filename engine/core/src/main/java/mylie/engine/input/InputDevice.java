@@ -50,10 +50,6 @@ public class InputDevice<D extends InputDevice<D>> {
 		return versioned(input).ref();
 	}
 
-	public <I extends Input<D, V>, V> boolean supports(I input) {
-		return states.containsKey(input);
-	}
-
 	public <I extends Input<? super D, V>, V> void value(I input, V value, long frameId) {
 		versioned(input).value(value, frameId);
 	}

@@ -14,6 +14,7 @@ public final class AxisDeathZone implements InputProcessor {
 		this.threshold = threshold;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <D extends InputDevice<D>, I extends Input<D, V>, V> InputEvent<D, I, V> process(InputEvent<D, I, V> event,
 			Consumer<InputEvent<D, I, V>> additionalEvents) {
