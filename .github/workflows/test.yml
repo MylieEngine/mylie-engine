@@ -38,7 +38,7 @@ jobs:
         run: ./gradlew test
 
       - name: Upload Test Results
-        if: false
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-result
