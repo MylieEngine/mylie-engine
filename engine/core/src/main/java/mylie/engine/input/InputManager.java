@@ -80,7 +80,7 @@ public class InputManager extends Components.Core {
 		for (InputDevice.Info value : InputDevice.Info.values()) {
 			nextFrameProvider.event(new InputEvent(virtualDevice, value, value.defaultValue()));
 		}
-		virtualDevice.states().forEach((input, _) -> {
+		virtualDevice.states().forEach((input, $) -> {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				return;
 			}
@@ -125,7 +125,7 @@ public class InputManager extends Components.Core {
 
 	@SuppressWarnings("unchecked")
 	public <T extends InputDevice<T>> List<T> devices(Class<T> type) {
-		return (List<T>) inputDevices.computeIfAbsent(type, _ -> new CopyOnWriteArrayList<>());
+		return (List<T>) inputDevices.computeIfAbsent(type, $ -> new CopyOnWriteArrayList<>());
 	}
 
 	public <T extends InputDevice<T>> T device(Class<T> type, int id) {
