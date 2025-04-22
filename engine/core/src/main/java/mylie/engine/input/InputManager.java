@@ -37,7 +37,9 @@ public class InputManager extends Components.Core {
 		devices(Keyboard.class).add(new Keyboard(null, true));
 		devices(Mouse.class).add(new Mouse(null, true));
 		for (int i = 0; i < 4; i++) {
-			devices(Gamepad.class).add(new Gamepad(null, true));
+			Gamepad gamepad = new Gamepad(null, true);
+			gamepad.value(Gamepad.PLAYER_INDEX, i, timer.currentTime().frameId());
+			devices(Gamepad.class).add(gamepad);
 		}
 	}
 
@@ -55,6 +57,8 @@ public class InputManager extends Components.Core {
 	private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
 		virtualDevice.provider(actualDevice.provider());
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
+		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, true));
+		virtualDevice.value(virtualDevice.NATIVE_DEVICE,actualDevice,timer.currentTime().frameId());
 		for (InputDevice.Info value : InputDevice.Info.values()) {
 			nextFrameProvider.event(new InputEvent(virtualDevice, value, actualDevice.value(value)));
 		}
@@ -69,6 +73,9 @@ public class InputManager extends Components.Core {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <D extends InputDevice<D>> void disableMapping(D virtualDevice) {
 		virtualDevice.provider(null);
+		D actualDevice=virtualDevice.value(virtualDevice.NATIVE_DEVICE);
+		virtualDevice.value(virtualDevice.NATIVE_DEVICE,null,timer.currentTime().frameId());
+		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, false));
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, false));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
 			nextFrameProvider.event(new InputEvent(virtualDevice, value, value.defaultValue()));
@@ -93,7 +100,9 @@ public class InputManager extends Components.Core {
 		}
 		D device = event.device();
 		device.value(event.inputId(), event.value(), timer.currentTime().frameId());
-		eventManager.fireEvent(event);
+		if(device.isVirtual() || event.inputId()==InputDevice.State.CONNECTED) {
+			eventManager.fireEvent(event);
+		}
 	}
 
 	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvents(
@@ -130,19 +139,19 @@ public class InputManager extends Components.Core {
 		return deviceList.get(id);
 	}
 
-	public void registerInputProvider(InputProvider provider) {
+	public void addProvider(InputProvider provider) {
 		inputProviders.add(provider);
 	}
 
-	public void unregisterInputProvider(InputProvider provider) {
+	public void removeProvider(InputProvider provider) {
 		inputProviders.remove(provider);
 	}
 
-	public void registerInputProcessor(InputProcessor processor) {
+	public void addProcessor(InputProcessor processor) {
 		inputProcessors.add(processor);
 	}
 
-	public void unregisterInputProcessor(InputProcessor processor) {
+	public void removeProcessor(InputProcessor processor) {
 		inputProcessors.remove(processor);
 	}
 
@@ -164,11 +173,14 @@ public class InputManager extends Components.Core {
 		return null;
 	}
 
-	public boolean available(Class<? extends InputDevice<?>> type) {
-		return this.inputDevices.containsKey(type);
+	public int available(Class<? extends InputDevice<?>> type) {
+		if(!inputDevices.containsKey(type)) {
+			return 0;
+		}
+		return inputDevices.get(type).size();
 	}
 
 	public boolean available(Class<? extends InputDevice<?>> type, int id) {
-		return available(type) && this.inputDevices.get(type).size() > id;
+		return available(type)>id;
 	}
 }

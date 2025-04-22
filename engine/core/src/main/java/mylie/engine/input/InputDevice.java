@@ -8,6 +8,7 @@ import lombok.Setter;
 import mylie.engine.util.Versioned;
 
 public class InputDevice<D extends InputDevice<D>> {
+	final Input<InputDevice<?>, D> NATIVE_DEVICE= () -> null;
 	public enum State implements Input<InputDevice<?>, Boolean> {
 		MAPPED, CONNECTED;
 

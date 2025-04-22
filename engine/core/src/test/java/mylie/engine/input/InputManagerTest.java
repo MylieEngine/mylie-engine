@@ -22,9 +22,9 @@ public class InputManagerTest {
 	@Test
 	void testProcessorAccess() {
 		Assertions.assertNull(inputManager.processor(AxisDeathZone.class));
-		inputManager.registerInputProcessor(new AxisDeathZone(0.5f));
+		inputManager.addProcessor(new AxisDeathZone(0.5f));
 		Assertions.assertNotNull(inputManager.processor(AxisDeathZone.class));
-		inputManager.unregisterInputProcessor(inputManager.processor(AxisDeathZone.class));
+		inputManager.removeProcessor(inputManager.processor(AxisDeathZone.class));
 		Assertions.assertNull(inputManager.processor(AxisDeathZone.class));
 	}
 
@@ -32,9 +32,9 @@ public class InputManagerTest {
 	void testProviderAccess() {
 		Assertions.assertNull(inputManager.provider(NotRegisteredProvider.class));
 		Assertions.assertNotNull(inputManager.provider(ProvideNextFrame.class));
-		inputManager.unregisterInputProvider(inputManager.provider(ProvideNextFrame.class));
+		inputManager.removeProvider(inputManager.provider(ProvideNextFrame.class));
 		Assertions.assertNull(inputManager.provider(ProvideNextFrame.class));
-		inputManager.registerInputProvider(new ProvideNextFrame());
+		inputManager.addProvider(new ProvideNextFrame());
 		Assertions.assertNotNull(inputManager.provider(ProvideNextFrame.class));
 	}
 
@@ -43,6 +43,8 @@ public class InputManagerTest {
 		Assertions.assertTrue(inputManager.available(Keyboard.class, 0));
 		Assertions.assertFalse(inputManager.available(Keyboard.class, 1));
 		Assertions.assertFalse(inputManager.available(NotRegisteredDevice.class, 0));
+		Assertions.assertEquals(1,inputManager.available(Keyboard.class));
+		Assertions.assertEquals(0,inputManager.available(NotRegisteredDevice.class));
 	}
 
 	@Test
