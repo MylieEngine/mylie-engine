@@ -41,7 +41,7 @@ public class ManagedMode {
 				command.run();
 			}
 		}
-		while (!core().mainThreadQueue().isEmpty()){
+		while (!core().mainThreadQueue().isEmpty()) {
 			Runnable poll = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (poll != null) {
 				poll.run();
