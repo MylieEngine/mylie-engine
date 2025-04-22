@@ -58,7 +58,7 @@ public class InputManager extends Components.Core {
 		virtualDevice.provider(actualDevice.provider());
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
 		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, true));
-		virtualDevice.value(virtualDevice.NATIVE_DEVICE,actualDevice,timer.currentTime().frameId());
+		virtualDevice.value(virtualDevice.NATIVE_DEVICE, actualDevice, timer.currentTime().frameId());
 		for (InputDevice.Info value : InputDevice.Info.values()) {
 			nextFrameProvider.event(new InputEvent(virtualDevice, value, actualDevice.value(value)));
 		}
@@ -73,8 +73,8 @@ public class InputManager extends Components.Core {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <D extends InputDevice<D>> void disableMapping(D virtualDevice) {
 		virtualDevice.provider(null);
-		D actualDevice=virtualDevice.value(virtualDevice.NATIVE_DEVICE);
-		virtualDevice.value(virtualDevice.NATIVE_DEVICE,null,timer.currentTime().frameId());
+		D actualDevice = virtualDevice.value(virtualDevice.NATIVE_DEVICE);
+		virtualDevice.value(virtualDevice.NATIVE_DEVICE, null, timer.currentTime().frameId());
 		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, false));
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, false));
 		for (InputDevice.Info value : InputDevice.Info.values()) {
@@ -100,7 +100,7 @@ public class InputManager extends Components.Core {
 		}
 		D device = event.device();
 		device.value(event.inputId(), event.value(), timer.currentTime().frameId());
-		if(device.isVirtual() || event.inputId()==InputDevice.State.CONNECTED) {
+		if (device.isVirtual() || event.inputId() == InputDevice.State.CONNECTED) {
 			eventManager.fireEvent(event);
 		}
 	}
@@ -174,13 +174,13 @@ public class InputManager extends Components.Core {
 	}
 
 	public int available(Class<? extends InputDevice<?>> type) {
-		if(!inputDevices.containsKey(type)) {
+		if (!inputDevices.containsKey(type)) {
 			return 0;
 		}
 		return inputDevices.get(type).size();
 	}
 
 	public boolean available(Class<? extends InputDevice<?>> type, int id) {
-		return available(type)>id;
+		return available(type) > id;
 	}
 }

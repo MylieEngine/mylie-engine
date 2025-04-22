@@ -43,8 +43,8 @@ public class InputManagerTest {
 		Assertions.assertTrue(inputManager.available(Keyboard.class, 0));
 		Assertions.assertFalse(inputManager.available(Keyboard.class, 1));
 		Assertions.assertFalse(inputManager.available(NotRegisteredDevice.class, 0));
-		Assertions.assertEquals(1,inputManager.available(Keyboard.class));
-		Assertions.assertEquals(0,inputManager.available(NotRegisteredDevice.class));
+		Assertions.assertEquals(1, inputManager.available(Keyboard.class));
+		Assertions.assertEquals(0, inputManager.available(NotRegisteredDevice.class));
 	}
 
 	@Test
