@@ -10,7 +10,7 @@ public class Gamepad extends InputDevice<Gamepad> {
 		super(Gamepad.class, virtual, provider);
 	}
 
-	public static Input<Gamepad,Integer> PLAYER_INDEX = () -> 0;
+	public static final Input<Gamepad,Integer> PLAYER_INDEX = () -> 0;
 
 	public enum State implements GamepadInput<Boolean> {
 		CONNECTED, WIRELESS;
