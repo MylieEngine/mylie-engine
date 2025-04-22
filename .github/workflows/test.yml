@@ -4,7 +4,6 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -37,6 +36,13 @@ jobs:
 
       - name: Run Tests
         run: ./gradlew test
+
+      - name: Upload Test Results
+        if: false
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result
+          path: /home/runner/work/mylie-engine/mylie-engine/engine/core/build/reports/tests/test/index.html
 
       - name: Prepare coverage report
         run: ./gradlew jacocoRootReport

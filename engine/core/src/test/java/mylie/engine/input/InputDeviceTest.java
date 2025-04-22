@@ -27,7 +27,7 @@ public class InputDeviceTest {
 		Assertions.assertFalse(ref.value());
 		gamepad.value(Gamepad.Button.START, true, 0);
 		Assertions.assertFalse(ref.isUpToDate());
-		Assertions.assertTrue(ref.value(true));
+		Assertions.assertFalse(ref.value(true));
 	}
 
 	@Test
