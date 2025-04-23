@@ -46,7 +46,7 @@ public class InputManager extends Components.Core {
 	public <T extends InputDevice<T>> void mapDevice(Class<T> type, int id, T device) {
 		if (device == null) {
 			disableMapping(device(type, id));
-		} else if (device.isVirtual()) {
+		} else if (device.value(InputDevice.State.VIRTUAL)) {
 			throw new IllegalArgumentException("Cannot map a virtual device");
 		} else {
 			enableMapping(device(type, id), device);
@@ -55,7 +55,8 @@ public class InputManager extends Components.Core {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <D extends InputDevice<D>> void enableMapping(D virtualDevice, D actualDevice) {
-		virtualDevice.provider(actualDevice.provider());
+		nextFrameProvider.event(
+				new InputEvent<>(virtualDevice, virtualDevice.PROVIDER, actualDevice.value(actualDevice.PROVIDER)));
 		nextFrameProvider.event(new InputEvent(virtualDevice, InputDevice.State.MAPPED, true));
 		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, true));
 		virtualDevice.value(virtualDevice.NATIVE_DEVICE, actualDevice, timer.currentTime().frameId());
@@ -72,7 +73,7 @@ public class InputManager extends Components.Core {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <D extends InputDevice<D>> void disableMapping(D virtualDevice) {
-		virtualDevice.provider(null);
+		nextFrameProvider.event(new InputEvent<>(virtualDevice, virtualDevice.PROVIDER, null));
 		D actualDevice = virtualDevice.value(virtualDevice.NATIVE_DEVICE);
 		virtualDevice.value(virtualDevice.NATIVE_DEVICE, null, timer.currentTime().frameId());
 		nextFrameProvider.event(new InputEvent(actualDevice, InputDevice.State.MAPPED, false));

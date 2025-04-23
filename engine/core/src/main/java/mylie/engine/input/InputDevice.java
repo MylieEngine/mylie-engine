@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import mylie.engine.util.Versioned;
 
 public class InputDevice<D extends InputDevice<D>> {
 	final Input<InputDevice<?>, D> NATIVE_DEVICE = () -> null;
+	final Input<InputDevice<?>, InputProvider> PROVIDER = () -> null;
 	public enum State implements Input<InputDevice<?>, Boolean> {
-		MAPPED, CONNECTED;
+		MAPPED, CONNECTED, VIRTUAL;
 
 		@Override
 		public Boolean defaultValue() {
@@ -31,16 +31,11 @@ public class InputDevice<D extends InputDevice<D>> {
 	private final Map<Input<? super D, ?>, Versioned<?>> states;
 	@Getter(AccessLevel.PUBLIC)
 	private final Class<D> type;
-	@Getter(AccessLevel.PUBLIC)
-	private final boolean isVirtual;
-	@Setter(AccessLevel.PACKAGE)
-	@Getter(AccessLevel.PACKAGE)
-	private InputProvider provider;
 	public InputDevice(Class<D> type, boolean isVirtual, InputProvider provider) {
 		this.type = type;
-		this.isVirtual = isVirtual;
-		this.provider = provider;
 		states = new HashMap<>();
+		value(State.VIRTUAL, isVirtual, 0);
+		value(PROVIDER, provider, 0);
 	}
 
 	public <I extends Input<? super D, V>, V> V value(I input) {

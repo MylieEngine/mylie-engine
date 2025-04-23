@@ -10,7 +10,7 @@ public class InputDeviceTest {
 	Gamepad gamepad;
 	@BeforeEach
 	void setUp() {
-		gamepad = new Gamepad(null, true);
+		gamepad = new Gamepad(null, false);
 	}
 
 	@Test
