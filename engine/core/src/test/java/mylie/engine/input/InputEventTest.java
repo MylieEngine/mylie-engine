@@ -1,6 +1,5 @@
 package mylie.engine.input;
 
-import mylie.engine.input.devices.Gamepad;
 import mylie.engine.input.devices.Keyboard;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
