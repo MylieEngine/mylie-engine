@@ -10,28 +10,30 @@ import mylie.engine.core.async.*;
 public class ApplicationManager extends Components.Core {
 	static final Target TARGET = new Target("Application-Thread");
 	private final Queue<Runnable> applicationQueue;
-	private final WorkerThread workerThread;
+	private WorkerThread workerThread;
 	@Getter(AccessLevel.PACKAGE)
-	private final Task<Boolean> applicationUpdateTask;
-	private final Application application;
-	private final Timer timer;
-	public ApplicationManager(ComponentManager manager) {
-		super(manager, ExecutionMode.ASYNC, TARGET, Cache.ONE_FRAME);
-		Vault vault = Objects.requireNonNull(component(Vault.class));
-		EngineSettings settings = Objects.requireNonNull(vault.item(EngineSettings.class));
-		manager.addComponent(settings.applicationClass());
-		application = Objects.requireNonNull(component(Application.class));
-		timer = Objects.requireNonNull(component(Timer.class));
+	private Task<Boolean> applicationUpdateTask;
+	private Application application;
+	private Timer timer;
+	public ApplicationManager() {
+		super(ExecutionMode.ASYNC, TARGET, Cache.ONE_FRAME);
+
 		applicationQueue = new ConcurrentLinkedQueue<>();
-		applicationUpdateTask = new ApplicationUpdateTask(this);
-		Scheduler scheduler = Objects.requireNonNull(component(Scheduler.class));
-		scheduler.register(Application.TARGET, applicationQueue::add);
-		workerThread = scheduler.createWorkerThread(TARGET);
+
 	}
 
 	@Override
 	protected void onAdded() {
 		super.onAdded();
+		Vault vault = Objects.requireNonNull(component(Vault.class));
+		EngineSettings settings = Objects.requireNonNull(vault.item(EngineSettings.class));
+		addComponent(settings.application());
+		application = Objects.requireNonNull(component(Application.class));
+		timer = Objects.requireNonNull(component(Timer.class));
+		Scheduler scheduler = Objects.requireNonNull(component(Scheduler.class));
+		scheduler.register(Application.TARGET, applicationQueue::add);
+		workerThread = scheduler.createWorkerThread(TARGET);
+		applicationUpdateTask = new ApplicationUpdateTask(this);
 		updateTask().dependencies().add(applicationUpdateTask);
 	}
 

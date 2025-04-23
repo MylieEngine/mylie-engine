@@ -3,6 +3,7 @@ package mylie.engine.core;
 import static mylie.engine.core.async.AsyncTestData.SCHEDULING_STRATEGIES_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Objects;
 import mylie.engine.core.async.Scheduler;
 import mylie.engine.core.async.SchedulingStrategy;
 import org.junit.jupiter.api.Assertions;
@@ -92,8 +93,8 @@ public class ImmediateModeTest {
 		EngineSettings engineSettings = Platform.initialize(UnitTestPlatform.class);
 		engineSettings.schedulingStrategy(schedulingStrategy);
 		ImmediateMode.start(engineSettings);
-		ObservableComponent component = ImmediateMode.addEngineComponent(ObservableComponent.class);
-		CoreTestComponent coreTestComponent = ImmediateMode.addEngineComponent(CoreTestComponent.class);
+		ObservableComponent component = ImmediateMode.addEngineComponent(new ObservableComponent());
+		CoreTestComponent coreTestComponent = ImmediateMode.addEngineComponent(new CoreTestComponent());
 		assertEquals(1, component.observeAdded);
 		assertEquals(0, component.observeEnabled);
 		assertEquals(0, component.observeInitialize);
@@ -134,12 +135,13 @@ public class ImmediateModeTest {
 		assertEquals(1, component.observeDestroy);
 		ImmediateMode.shutdown("OK");
 		assertTrue(coreTestComponent.initialized);
+		assertEquals(component.observeUpdate, component.observeCount);
 	}
 
 	public static class CoreTestComponent extends Components.Core {
 		boolean initialized;
-		public CoreTestComponent(ComponentManager manager) {
-			super(manager);
+		public CoreTestComponent() {
+			super();
 		}
 
 		@Override
@@ -157,8 +159,9 @@ public class ImmediateModeTest {
 		private int observeUpdate;
 		private int observeInitialize;
 		private int observeDestroy;
-		public ObservableComponent(ComponentManager manager) {
-			super(manager);
+		private int observeCount;
+		public ObservableComponent() {
+			super();
 		}
 
 		@Override
@@ -183,6 +186,7 @@ public class ImmediateModeTest {
 		protected void onUpdate() {
 			super.onUpdate();
 			observeUpdate++;
+			Objects.requireNonNull(component(Scheduler.class)).submit(() -> observeCount++, Engine.TARGET);
 		}
 
 		@Override

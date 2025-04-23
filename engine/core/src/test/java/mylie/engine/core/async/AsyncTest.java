@@ -29,7 +29,6 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testInit(Scheduler scheduler) {
-		scheduler.multiThreaded();
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(Cache.NO));
 		assertDoesNotThrow(() -> scheduler.unregister(Cache.NO));
@@ -220,14 +219,14 @@ class AsyncTest {
 	@Test
 	public void testInitWithoutEngine() {
 		ComponentManager componentManager = new ComponentManager();
-		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(Scheduler.class));
+		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(new Scheduler()));
 	}
 
 	@Test
 	public void testInitWithoutSettings() {
 		ComponentManager componentManager = new ComponentManager();
-		Assertions.assertNotNull(componentManager.addComponent(Vault.class));
-		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(Scheduler.class));
+		Assertions.assertNotNull(componentManager.addComponent(new Vault()));
+		Assertions.assertDoesNotThrow(() -> componentManager.addComponent(new Scheduler()));
 	}
 
 }

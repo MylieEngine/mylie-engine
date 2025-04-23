@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.async.Result;
-import mylie.engine.util.ClassUtils;
 
 @Slf4j
 public class ComponentManager {
@@ -18,11 +17,11 @@ public class ComponentManager {
 		components = new CopyOnWriteArrayList<>();
 	}
 
-	public <T extends Component> T addComponent(Class<T> component) {
-		T instance = ClassUtils.newInstance(component, this);
-		components.add(instance);
-		instance.onAdded();
-		return instance;
+	public <T extends Component> T addComponent(T component) {
+		components.add(component);
+		component.manager(this);
+		component.onAdded();
+		return component;
 	}
 
 	public <T extends Component> T component(Class<T> type) {

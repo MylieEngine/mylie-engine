@@ -12,8 +12,8 @@ public class ManagedMode {
 		throw new IllegalInstantiationException(ManagedMode.class);
 	}
 
-	public static ShutdownReason start(EngineSettings engineSettings, Class<? extends Application> applicationClass) {
-		engineSettings.applicationClass(applicationClass);
+	public static ShutdownReason start(EngineSettings engineSettings, Application application) {
+		engineSettings.application(application);
 		Engine.initialize(engineSettings);
 		Scheduler scheduler = core().componentManager().component(Scheduler.class);
 		ShutdownReason shutdownReason = null;
@@ -39,6 +39,12 @@ public class ManagedMode {
 			Runnable command = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
 			if (command != null) {
 				command.run();
+			}
+		}
+		while (!core().mainThreadQueue().isEmpty()) {
+			Runnable poll = CheckedExceptions.poll(core().mainThreadQueue(), 16, TimeUnit.MILLISECONDS);
+			if (poll != null) {
+				poll.run();
 			}
 		}
 		return Engine.shutdownReason();

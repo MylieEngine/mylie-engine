@@ -5,8 +5,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Vault extends Component {
 	private final List<Object> vaultItems;
-	public Vault(ComponentManager manager) {
-		super(manager);
+	public Vault() {
+		super();
 		this.vaultItems = new CopyOnWriteArrayList<>();
 	}
 

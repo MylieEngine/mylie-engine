@@ -5,8 +5,8 @@ import mylie.engine.core.async.Target;
 public abstract class Application extends Component {
 	public static final Target TARGET = new Target("Application", false, false);
 
-	protected Application(ComponentManager manager) {
-		super(manager);
+	protected Application() {
+		super();
 	}
 
 	protected abstract void onInitialize();

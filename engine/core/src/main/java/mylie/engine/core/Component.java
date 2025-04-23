@@ -2,14 +2,15 @@ package mylie.engine.core;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class Component {
 	@Getter(AccessLevel.PACKAGE)
-	private final ComponentManager manager;
-	protected Component(ComponentManager manager) {
-		this.manager = manager;
+	@Setter(AccessLevel.PACKAGE)
+	private ComponentManager manager;
+	protected Component() {
 	}
 
 	protected void onAdded() {
@@ -24,7 +25,7 @@ public abstract class Component {
 		return manager == null ? null : manager.component(type);
 	}
 
-	protected final <T extends Component> void addComponent(Class<T> component) {
+	protected final <T extends Component> void addComponent(T component) {
 		manager.addComponent(component);
 	}
 
