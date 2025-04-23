@@ -25,6 +25,7 @@ public class InputManager extends Components.Core {
 		this.inputDevices = new ConcurrentHashMap<>();
 		this.nextFrameProvider = new ProvideNextFrame();
 		this.inputProcessors.add(new DeviceRemapper(this));
+		this.inputProcessors.add(new EventFilter());
 		this.inputProviders.add(nextFrameProvider);
 	}
 
@@ -79,7 +80,8 @@ public class InputManager extends Components.Core {
 		for (InputDevice.Info value : InputDevice.Info.values()) {
 			nextFrameProvider.event(new InputEvent(virtualDevice, value, value.defaultValue()));
 		}
-		virtualDevice.states().forEach((input, $) -> {
+        //noinspection unused
+        virtualDevice.states().forEach((input, $) -> {
 			if (input instanceof InputDevice.Info || input instanceof InputDevice.State) {
 				return;
 			}
@@ -96,12 +98,13 @@ public class InputManager extends Components.Core {
 	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvent(InputEvent<D, I, V> event) {
 		for (InputProcessor inputProcessor : inputProcessors) {
 			event = inputProcessor.process(event, this::processInputEvent);
+			if (event == null) {
+				return;
+			}
 		}
 		D device = event.device();
 		device.value(event.inputId(), event.value(), timer.currentTime().frameId());
-		if (device.isVirtual() || event.inputId() == InputDevice.State.CONNECTED) {
-			eventManager.fireEvent(event);
-		}
+		eventManager.fireEvent(event);
 	}
 
 	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvents(
@@ -123,7 +126,8 @@ public class InputManager extends Components.Core {
 
 	@SuppressWarnings("unchecked")
 	public <T extends InputDevice<T>> List<T> devices(Class<T> type) {
-		return (List<T>) inputDevices.computeIfAbsent(type, $ -> new CopyOnWriteArrayList<>());
+        //noinspection unused
+        return (List<T>) inputDevices.computeIfAbsent(type, $ -> new CopyOnWriteArrayList<>());
 	}
 
 	public <T extends InputDevice<T>> T device(Class<T> type, int id) {
