@@ -105,16 +105,4 @@ public class ComponentManagerTest {
 			removeComponent(component(ComponentB.class));
 		}
 	}
-
-	public static class IllegalComponent extends Component {
-		private final String name;
-		public IllegalComponent(String name) {
-			this.name = name;
-		}
-
-		@SuppressWarnings("unused")
-		public String name() {
-			return name;
-		}
-	}
 }
