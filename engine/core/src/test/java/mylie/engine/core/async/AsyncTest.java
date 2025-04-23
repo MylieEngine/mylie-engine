@@ -29,7 +29,6 @@ class AsyncTest {
 	@ParameterizedTest
 	@MethodSource(SCHEDULER_SOURCE)
 	public void testInit(Scheduler scheduler) {
-		scheduler.multiThreaded();
 		assertDoesNotThrow(() -> scheduler.register(Cache.NO));
 		assertThrows(IllegalArgumentException.class, () -> scheduler.register(Cache.NO));
 		assertDoesNotThrow(() -> scheduler.unregister(Cache.NO));

@@ -8,7 +8,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
-import mylie.engine.core.ComponentManager;
 import mylie.engine.util.CheckedExceptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
