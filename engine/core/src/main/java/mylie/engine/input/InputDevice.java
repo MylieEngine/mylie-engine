@@ -52,6 +52,7 @@ public class InputDevice<D extends InputDevice<D>> {
 
 	@SuppressWarnings("unchecked")
 	private <I extends Input<? super D, V>, V> Versioned<V> versioned(I input) {
-		return (Versioned<V>) states.computeIfAbsent(input, _ -> new Versioned<>(input.defaultValue()));
+		// noinspection unused
+		return (Versioned<V>) states.computeIfAbsent(input, $ -> new Versioned<>(input.defaultValue()));
 	}
 }
