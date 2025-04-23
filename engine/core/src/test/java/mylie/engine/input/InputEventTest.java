@@ -10,7 +10,6 @@ class InputEventTest {
 	void testVariation() {
 		Keyboard keyboard = new Keyboard(null, false);
 		Keyboard keyboard1 = new Keyboard(null, false);
-		Gamepad gamepad = new Gamepad(null, false);
 		InputEvent<Keyboard, Keyboard.Key, Boolean> event = new InputEvent<>(keyboard, Keyboard.Key.A, true);
 		event = event.with(keyboard1, null, null);
 		Assertions.assertEquals(keyboard1, event.device());
