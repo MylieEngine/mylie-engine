@@ -106,7 +106,6 @@ public class InputManager extends Components.Core {
 
 	private <D extends InputDevice<D>, I extends Input<D, V>, V> void processInputEvents(
 			List<InputEvent<D, I, V>> events) {
-		System.out.println(events.size() + " events to process");
 		for (InputEvent<D, I, V> event : events) {
 			processInputEvent(event);
 		}
