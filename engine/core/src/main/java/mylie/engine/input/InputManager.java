@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.*;
-import mylie.engine.core.ComponentManager;
 import mylie.engine.core.Components;
 import mylie.engine.core.Timer;
 import mylie.engine.event.EventManager;
@@ -19,8 +18,8 @@ public class InputManager extends Components.Core {
 	private final ProvideNextFrame nextFrameProvider;
 	private Timer timer;
 	EventManager eventManager;
-	public InputManager(ComponentManager manager) {
-		super(manager);
+	public InputManager() {
+		super();
 		this.inputProviders = new CopyOnWriteArrayList<>();
 		this.inputProcessors = new CopyOnWriteArrayList<>();
 		this.inputDevices = new ConcurrentHashMap<>();

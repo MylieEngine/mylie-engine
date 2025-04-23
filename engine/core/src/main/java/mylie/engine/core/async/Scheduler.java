@@ -6,7 +6,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import mylie.engine.core.Component;
-import mylie.engine.core.ComponentManager;
 import mylie.engine.core.EngineSettings;
 import mylie.engine.core.Vault;
 
@@ -16,18 +15,23 @@ public final class Scheduler extends Component {
 	private final Map<Target, SchedulingStrategy.TaskExecutor> taskExecutors = new ConcurrentHashMap<>();
 	private final List<Cache> caches = new ArrayList<>();
 	Scheduler(SchedulingStrategy strategy) {
-		super(null);
+		super();
 		this.schedulingStrategy = strategy;
 		onInitialize();
 	}
-	public Scheduler(ComponentManager manager) {
-		super(manager);
-		onInitialize();
+	public Scheduler() {
+
 	}
 
 	private void onInitialize() {
 		loadSettings();
 		taskExecutors.put(Target.BACKGROUND, schedulingStrategy.executor(Target.BACKGROUND, null));
+	}
+
+	@Override
+	protected void onAdded() {
+		super.onAdded();
+		onInitialize();
 	}
 
 	public WorkerThread createWorkerThread(Target target) {

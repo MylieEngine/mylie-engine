@@ -11,8 +11,7 @@ public class ImmediateMode extends Application {
 	private static boolean initialized = false;
 	private static UpdateThread updateLoopThread;
 
-	public ImmediateMode(ComponentManager manager) {
-		super(manager);
+	public ImmediateMode() {
 	}
 
 	@Override
@@ -30,9 +29,9 @@ public class ImmediateMode extends Application {
 
 	}
 
-	public static <T extends Component> T addEngineComponent(Class<T> componentClass) {
-		core().componentManager().addComponent(componentClass);
-		return getEngineComponent(componentClass);
+	public static <T extends Component> T addEngineComponent(T component) {
+		core().componentManager().addComponent(component);
+		return component;
 	}
 
 	public static <T extends Component> T getEngineComponent(Class<T> componentClass) {
@@ -44,7 +43,7 @@ public class ImmediateMode extends Application {
 	}
 
 	public static ShutdownReason start(EngineSettings engineSettings) {
-		engineSettings.applicationClass(ImmediateMode.class);
+		engineSettings.application(new ImmediateMode());
 		initialize(engineSettings);
 		return core().shutdownReason();
 	}

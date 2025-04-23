@@ -6,15 +6,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import mylie.engine.core.Component;
-import mylie.engine.core.ComponentManager;
 import mylie.engine.core.async.Scheduler;
 import mylie.engine.core.async.Target;
 
 public class EventManager extends Component {
 	@Getter(AccessLevel.PACKAGE)
 	private final List<EventListener> listeners;
-	public EventManager(ComponentManager manager) {
-		super(manager);
+	public EventManager() {
+		super();
 		this.listeners = new CopyOnWriteArrayList<>();
 	}
 

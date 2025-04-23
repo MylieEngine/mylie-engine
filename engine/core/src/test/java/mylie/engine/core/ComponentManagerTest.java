@@ -1,7 +1,6 @@
 package mylie.engine.core;
 
 import mylie.engine.TestUtils;
-import mylie.engine.util.exceptions.ConstructorNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,21 +16,21 @@ public class ComponentManagerTest {
 	@Test
 	void testAddComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
-		manager.addComponent(ComponentA.class);
+		manager.addComponent(new ComponentA());
 		Assertions.assertNotNull(manager.component(ComponentA.class));
 	}
 
 	@Test
 	void testGetComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
-		manager.addComponent(ComponentA.class);
+		manager.addComponent(new ComponentA());
 		Assertions.assertSame(manager.component(ComponentA.class), manager.component(ComponentA.class));
 	}
 
 	@Test
 	void testGetNotExisitingComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
-		manager.addComponent(ComponentA.class);
+		manager.addComponent(new ComponentA());
 		Assertions.assertNotNull(manager.component(ComponentA.class));
 		Assertions.assertNull(manager.component(ComponentB.class));
 	}
@@ -39,7 +38,7 @@ public class ComponentManagerTest {
 	@Test
 	void testRemoveComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
-		manager.addComponent(ComponentA.class);
+		manager.addComponent(new ComponentA());
 		Assertions.assertNotNull(manager.component(ComponentA.class));
 		manager.removeComponent(manager.component(ComponentA.class));
 		Assertions.assertNull(manager.component(ComponentA.class));
@@ -48,15 +47,15 @@ public class ComponentManagerTest {
 	@Test
 	void testRemoveNotExistingComponent() {
 		Assertions.assertNull(manager.component(ComponentA.class));
-		manager.addComponent(ComponentA.class);
+		manager.addComponent(new ComponentA());
 		Assertions.assertNotNull(manager.component(ComponentA.class));
-		ComponentB componentB = manager.removeComponent(new ComponentB(manager));
+		ComponentB componentB = manager.removeComponent(new ComponentB());
 		Assertions.assertNull(componentB);
 	}
 
 	@Test
 	void testSubComponents() {
-		manager.addComponent(ComponentC.class);
+		manager.addComponent(new ComponentC());
 		Assertions.assertNotNull(manager.component(ComponentC.class));
 		manager.component(ComponentC.class).test();
 		manager.removeComponent(manager.component(ComponentC.class));
@@ -66,37 +65,32 @@ public class ComponentManagerTest {
 	}
 
 	@Test
-	void testNoSuitableConstructor() {
-		Assertions.assertThrows(ConstructorNotFoundException.class, () -> manager.addComponent(IllegalComponent.class));
-	}
-
-	@Test
 	void testUtilityInstantiation() {
 		TestUtils.testUtilityInstantiation(Components.class);
 	}
 
 	public static class ComponentA extends Component {
-		public ComponentA(ComponentManager manager) {
-			super(manager);
+		public ComponentA() {
+
 		}
 	}
 
 	public static class ComponentB extends Component {
-		public ComponentB(ComponentManager manager) {
-			super(manager);
+		public ComponentB() {
+
 		}
 	}
 
 	public static class ComponentC extends Component {
-		public ComponentC(ComponentManager manager) {
-			super(manager);
+		public ComponentC() {
+
 		}
 
 		@Override
 		protected void onAdded() {
 			super.onAdded();
-			addComponent(ComponentA.class);
-			addComponent(ComponentB.class);
+			addComponent(new ComponentA());
+			addComponent(new ComponentB());
 		}
 
 		protected void test() {
@@ -114,8 +108,7 @@ public class ComponentManagerTest {
 
 	public static class IllegalComponent extends Component {
 		private final String name;
-		public IllegalComponent(ComponentManager manager, String name) {
-			super(manager);
+		public IllegalComponent(String name) {
 			this.name = name;
 		}
 

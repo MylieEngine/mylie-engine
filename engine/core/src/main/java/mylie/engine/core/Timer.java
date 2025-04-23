@@ -13,10 +13,16 @@ public class Timer extends Component {
 	private Time currentTime;
 	private long lastUpdate;
 	@Getter
-	private final Settings settings;
+	private Settings settings;
 
-	public Timer(ComponentManager manager) {
-		super(manager);
+	public Timer() {
+		super();
+
+	}
+
+	@Override
+	protected void onAdded() {
+		super.onAdded();
 		Vault component = component(Vault.class);
 		EngineSettings engineSettings = component == null ? null : component.item(EngineSettings.class);
 		if (engineSettings != null) {

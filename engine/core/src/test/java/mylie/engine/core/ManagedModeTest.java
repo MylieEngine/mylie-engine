@@ -21,7 +21,7 @@ public class ManagedModeTest {
 		Run10.count = 0;
 		Run10.count2 = 0;
 		Run10.restart = false;
-		ShutdownReason shutdownReason = ManagedMode.start(engineSettings, Run10.class);
+		ShutdownReason shutdownReason = ManagedMode.start(engineSettings, new Run10());
 		ShutdownReason.Normal normal = Assertions.assertInstanceOf(ShutdownReason.Normal.class, shutdownReason);
 		Assertions.assertEquals("OK", normal.reason());
 		Assertions.assertTrue(Run10.restart);
@@ -40,8 +40,8 @@ public class ManagedModeTest {
 		private static final int RESTART_COUNT = 10;
 		private static final int SHUTDOWN_COUNT = 20;
 		private static int count2;
-		public Run10(ComponentManager manager) {
-			super(manager);
+		public Run10() {
+
 		}
 
 		@Override

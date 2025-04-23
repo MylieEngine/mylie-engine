@@ -8,7 +8,7 @@ public class VaultTest {
 	Vault vault;
 	@BeforeEach
 	public void setUp() {
-		vault = new Vault(null);
+		vault = new Vault();
 	}
 
 	@Test

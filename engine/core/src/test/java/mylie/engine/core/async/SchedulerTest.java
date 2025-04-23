@@ -20,7 +20,7 @@ class SchedulerTest {
 	@Test
 	public void testInstantiation() {
 		ComponentManager manager = new ComponentManager();
-		Scheduler scheduler = Assertions.assertDoesNotThrow(() -> new Scheduler(manager));
+		Scheduler scheduler = Assertions.assertDoesNotThrow(() -> new Scheduler());
 		Assertions.assertNotNull(scheduler);
 	}
 

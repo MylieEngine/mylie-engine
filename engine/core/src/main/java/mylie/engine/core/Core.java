@@ -25,13 +25,13 @@ final class Core {
 	Core(EngineSettings settings) {
 		this.settings = settings;
 		componentManager = new ComponentManager();
-		Vault vault = componentManager.addComponent(Vault.class);
+		Vault vault = componentManager.addComponent(new Vault());
 		vault.addItem(settings);
-		componentManager.addComponent(Scheduler.class);
-		componentManager.addComponent(Timer.class);
+		componentManager.addComponent(new Scheduler());
+		componentManager.addComponent(new Timer());
 		initScheduler();
-		componentManager.addComponent(EventManager.class);
-		componentManager.addComponent(InputManager.class);
+		componentManager.addComponent(new EventManager());
+		componentManager.addComponent(new InputManager());
 	}
 
 	private void initScheduler() {
@@ -43,7 +43,7 @@ final class Core {
 		if (log.isTraceEnabled()) {
 			log.trace("Initializing...");
 		}
-		componentManager.addComponent(ApplicationManager.class);
+		componentManager.addComponent(new ApplicationManager());
 	}
 
 	void onUpdate() {

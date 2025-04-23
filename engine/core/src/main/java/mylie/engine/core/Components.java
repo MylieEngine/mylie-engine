@@ -15,8 +15,8 @@ public final class Components {
 	}
 
 	public abstract static class App extends Base {
-		protected App(ComponentManager manager) {
-			super(manager, ExecutionMode.ASYNC, ApplicationManager.TARGET, Cache.ONE_FRAME);
+		protected App() {
+			super(ExecutionMode.ASYNC, ApplicationManager.TARGET, Cache.ONE_FRAME);
 		}
 
 		@Override
@@ -37,19 +37,19 @@ public final class Components {
 	}
 
 	public abstract static class Core extends Base {
-		protected Core(ComponentManager manager) {
-			super(manager, ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME);
+		protected Core() {
+			this(ExecutionMode.ASYNC, Target.BACKGROUND, Cache.ONE_FRAME);
 		}
 
-		protected Core(ComponentManager manager, ExecutionMode executionMode, Target target, Cache cache) {
-			super(manager, executionMode, target, cache);
+		protected Core(ExecutionMode executionMode, Target target, Cache cache) {
+			super(executionMode, target, cache);
 		}
 	}
 
 	@Slf4j
 	@Getter
 	abstract static class Base extends Component {
-		private final Task<Boolean> updateTask;
+		private Task<Boolean> updateTask;
 		@Setter(AccessLevel.PACKAGE)
 		private boolean initialized;
 		@Setter(AccessLevel.PUBLIC)
@@ -57,8 +57,19 @@ public final class Components {
 		private boolean enabled = true;
 		@Setter(AccessLevel.PACKAGE)
 		private boolean currentlyEnabled;
-		Base(ComponentManager manager, ExecutionMode executionMode, Target target, Cache cache) {
-			super(manager);
+		private final ExecutionMode executionMode;
+		private final Target target;
+		private final Cache cache;
+		Base(ExecutionMode executionMode, Target target, Cache cache) {
+			super();
+			this.executionMode = executionMode;
+			this.target = target;
+			this.cache = cache;
+		}
+
+		@Override
+		protected void onAdded() {
+			super.onAdded();
 			updateTask = new UpdateTask(component(Scheduler.class), executionMode, target, cache,
 					component(Timer.class), this);
 		}

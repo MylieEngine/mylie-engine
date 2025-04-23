@@ -15,8 +15,7 @@ class EventManagerTest {
 
 	@Test
 	void testFireEventWithSingleListener() {
-		ComponentManager dummyComponentManager = new ComponentManager();
-		EventManager eventManager = new EventManager(dummyComponentManager);
+		EventManager eventManager = new EventManager();
 		TheTestListener listener = new TheTestListener();
 		TheTestEvent event = new TheTestEvent();
 		eventManager.registerListener(listener);
@@ -27,8 +26,7 @@ class EventManagerTest {
 
 	@Test
 	void testFireEventWithMultipleListeners() {
-		ComponentManager dummyComponentManager = new ComponentManager();
-		EventManager eventManager = new EventManager(dummyComponentManager);
+		EventManager eventManager = new EventManager();
 		TheTestListener listener1 = new TheTestListener();
 		TheTestListener listener2 = new TheTestListener();
 		TheTestEvent event = new TheTestEvent();
@@ -43,16 +41,14 @@ class EventManagerTest {
 
 	@Test
 	void testFireEventWithNoListeners() {
-		ComponentManager dummyComponentManager = new ComponentManager();
-		EventManager eventManager = new EventManager(dummyComponentManager);
+		EventManager eventManager = new EventManager();
 		TheTestEvent event = new TheTestEvent();
 		eventManager.fireEvent(event);
 	}
 
 	@Test
 	void testFireEventAfterUnregisteringListener() {
-		ComponentManager dummyComponentManager = new ComponentManager();
-		EventManager eventManager = new EventManager(dummyComponentManager);
+		EventManager eventManager = new EventManager();
 		TheTestListener listener = new TheTestListener();
 		TheTestEvent event = new TheTestEvent();
 		eventManager.registerListener(listener);
@@ -66,8 +62,8 @@ class EventManagerTest {
 		ComponentManager componentManager = new ComponentManager();
 		Queue<Runnable> runnables = new LinkedList<>();
 		Target target = new Target("TestTarget", true, false);
-		Scheduler scheduler = componentManager.addComponent(Scheduler.class);
-		EventManager eventManager = componentManager.addComponent(EventManager.class);
+		Scheduler scheduler = componentManager.addComponent(new Scheduler());
+		EventManager eventManager = componentManager.addComponent(new EventManager());
 		scheduler.register(target, runnables::add);
 		TheTestListener listener = new TheTestListener();
 		eventManager.registerListener(listener, target);

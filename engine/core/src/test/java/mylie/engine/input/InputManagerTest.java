@@ -89,9 +89,9 @@ public class InputManagerTest {
 
 	public static InputManager buildTestInputManager() {
 		ComponentManager componentManager = new ComponentManager();
-		componentManager.addComponent(Timer.class);
-		componentManager.addComponent(EventManager.class);
-		return componentManager.addComponent(InputManager.class);
+		componentManager.addComponent(new Timer());
+		componentManager.addComponent(new EventManager());
+		return componentManager.addComponent(new InputManager());
 	}
 
 	public static void update(InputManager inputManager) {
