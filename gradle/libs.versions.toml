@@ -6,7 +6,7 @@ spotless = "7.2.1"
 sonarqube= "6.1.0.5360"
 palantirGitVersion="3.2.0"
 junit="5.12.2"
-junit-platform = "1.12.2"
+junit-platform = "1.13.4"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
